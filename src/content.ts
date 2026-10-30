@@ -32,9 +32,9 @@ export const profile = {
 };
 
 export const experience = [
-  { role: "AI Developer", org: "WPH Digital Phil.", range: "Mar 2026 – Present",
+  { role: "AI Developer", org: "WPH Digital Phil.", range: "2026 – Present",
     note: "Full-stack + AI solutions for Southeast Asian clients. Client work under NDA." },
-  { role: "Freelance AI Developer (subcontract)", org: "Independent", range: "Mar–Jun 2025 · Dec 2025–Apr 2026",
+  { role: "AI-Native Full Stack Developer (Subcontract)", org: "Independent", range: "2025 – 2026",
     note: "~10 AI-driven SaaS MVPs for one client with Lovable, Replit and Claude, incl. a fitness app with real-time camera rep counting and exercise form checks, plus Spotify, Apple HealthKit and ElevenLabs voice coach integrations." },
 ];
 
