@@ -73,9 +73,11 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
      Play → hold 3s → 200ms clear → next run → loop. Fixed panel height. Pause when off-screen or hovered. Mono `1/2` switcher with prev/next instead of replay.
 2. **01 / Experience**: styled like `git log`. Each entry: commit-hash-looking short id (derived, e.g. `a3f9c1`), date range in mono, role, company, 1 to 2 lines. Hover highlights the row with a 1px amber left rule.
 3. **02 / Stack**: rendered as a dependency manifest. Grouped table: `ai/llm`, `full-stack`, `cloud`, `tooling` → items as mono tokens, each with a small (14–16px) monochrome brand icon in `--fg-muted`, turning to the brand color or `--fg` on hover. Concepts without a logo (RAG, Embeddings, Structured output, LLM evaluation, OCR) get no icon, just the token. No logo cloud, no marquee. Hovering a stack item highlights the project cards below that use it (shared state via context). This cross-linking is a key frontend showcase.
-4. **03 / Work**: exactly 3 entries, in order: AI equity research platform, Vestra, Logos. No other WPH client work.
-   - Card layout: index `A`, title, one-line context, tags, and **one big metric** rendered as `<MetricDelta from to unit />` (e.g. `562s → 113s` with a bar that shrinks from 100% to 20% width on view).
-   - Click a card → expands in place (Framer `layout` + `layoutId`) into a detail panel: problem, what I built (bullets from content), stack, "Under NDA: anonymized, no code or screenshots" note for client work. Esc / click-outside to close. URL hash updates (`#work-a`) so it's linkable.
+4. **03 / Work**: a one-project-per-view carousel. Exactly 3 entries, order: Vestra (default, shown first), AI equity research platform, Logos. No other WPH client work.
+   - Each slide shows the full project: index, title, one-line context, kind label, **one big metric** as `<MetricDelta from to unit />` (bar animates on view), the points, stack tokens, links (Vestra: live demo + model; no repo link while private). Client work shows "Under NDA: anonymized, no code or screenshots".
+   - Controls: ‹ › buttons, mono `1 / 3` counter, pager dots, keyboard ←/→ when the carousel is focused, swipe/drag on touch. Slide transition: horizontal slide + fade, direction-aware.
+   - URL hash per project (`#work-vestra`, `#work-a`, `#work-logos`); loading a hash opens that slide.
+   - Stack ↔ Work link: hovering/focusing a stack token highlights the pager dots of the projects that use it; the current slide's matching stack tokens highlight too.
    - Small label on each: `PoC · client · team` or `personal · thesis · team` so honesty is visible.
 5. **04 / Contact**: big email (click to copy, shows "copied" in mono), LinkedIn, GitHub. No phone. No form.
 6. **Footer**: `built with Next.js · Tailwind · Framer Motion · AI-assisted, human-reviewed` + year.
@@ -84,7 +86,7 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
 - **Command palette (⌘K / Ctrl+K, also a button on mobile)** via `cmdk`: jump to sections, open a case study, copy email, open LinkedIn, open GitHub.
 - Keyboard: `g` then `w` → work, `g` then `c` → contact (optional, only if time).
 - Subtle background: faint 1px dotted grid on `--bg`, static. Nothing that follows the cursor.
-- Section entrance: label line draws left→right (scaleX), content appears with a 4px y-offset, 200ms. Once only.
+- Section motion: scroll-linked and reversible (src/lib/usePrintIn.tsx). Label hairline draws on scroll, rows print in top→bottom, and fade back out when scrolling up. Smoothed with useSpring, transform/opacity/clip-path only. Reduced motion = final state.
 
 ## Content
 All copy lives in `src/content.ts`, typed. Components never hard-code text.
@@ -109,8 +111,8 @@ export const experience = [
 ];
 
 export const stack = {
-  "ai/llm": ["AWS Bedrock (Claude)", "OpenAI", "Gemini", "RAG", "Embeddings", "Qdrant", "Bedrock KB", "Structured output", "LLM evaluation", "OCR", "YOLO"],
-  "full-stack": ["Next.js", "React", "TypeScript", "Tailwind", "tRPC", "Prisma", "PostgreSQL", "Supabase", "Zod", "Auth.js", "Docker"],
+  "ai/llm": ["Amazon Bedrock", "Claude", "OpenAI", "Gemini", "RAG", "Qdrant", "Bedrock Knowledge Bases", "LLM evaluation", "OCR", "YOLO"],
+  "full-stack": ["JavaScript", "TypeScript", "Python", "Next.js", "React", "Tailwind", "tRPC", "Prisma", "PostgreSQL", "Supabase", "Zod", "Auth.js", "Docker"],
   "cloud": ["AWS", "Google Cloud Platform"],
   "tooling": ["Claude Code", "Codex", "Cursor", "Antigravity", "Vitest", "GitLab", "GitHub", "pgAdmin", "Figma"],
 };
@@ -126,7 +128,7 @@ export const work = [
       "Market data pipeline and financial computations end to end; segment figures reconcile exactly to audited filings.",
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
-    stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "AWS Bedrock (Claude)", "Vitest"] },
+    stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "Amazon Bedrock", "Vitest"] },
   { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
     context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
     live: "https://vestra-dresscode.vercel.app",

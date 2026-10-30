@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { education, experience } from "@/content";
 import { usePrintInRow } from "@/lib/usePrintIn";
@@ -19,12 +19,15 @@ function PrintedRow({ as: Root = "li", hash, index, educationRow = false, childr
   educationRow?: boolean;
   children: ReactNode;
 }) {
-  const { typedHash, clipPath, finish } = usePrintInRow(index, hash);
+  const ref = useRef<HTMLLIElement & HTMLDivElement>(null);
+  const { typedHash, clipPath, opacity, y, finish, resume } = usePrintInRow(ref, index, hash);
   return (
-    <Root className={styles.row} tabIndex={0} onFocus={finish} data-print-row={index}>
-      <motion.span className={`commit-id ${styles.hash}`} aria-hidden="true">{typedHash}</motion.span>
-      <motion.div className={`${educationRow ? "education-row" : "experience-row"} ${styles.body}`} style={{ clipPath }} data-print-body>
-        {children}
+    <Root ref={ref} className={styles.row} tabIndex={0} onFocus={finish} onBlur={resume} data-print-row={index}>
+      <motion.div className={styles.motion} style={{ opacity, y }}>
+        <motion.span className={`commit-id ${styles.hash}`} aria-hidden="true">{typedHash}</motion.span>
+        <motion.div className={`${educationRow ? "education-row" : "experience-row"} ${styles.body}`} style={{ clipPath }} data-print-body>
+          {children}
+        </motion.div>
       </motion.div>
     </Root>
   );
