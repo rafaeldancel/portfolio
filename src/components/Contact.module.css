@@ -1,0 +1,176 @@
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+  padding-block: 16px 24px;
+}
+
+.intro,
+.formRow {
+  min-width: 0;
+}
+
+.location {
+  color: var(--fg);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  max-width: 560px;
+  margin-top: 24px;
+}
+
+.emailLabel {
+  display: inline-grid;
+}
+
+.emailLabel > span {
+  grid-area: 1 / 1;
+  text-align: center;
+}
+
+.hiddenLabel {
+  visibility: hidden;
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 16px;
+  background: var(--bg-raised);
+}
+
+.row {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.label {
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+textarea.input {
+  min-height: 144px;
+  resize: vertical;
+}
+
+.input:focus-visible {
+  border-color: var(--accent);
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--accent);
+}
+
+.error {
+  color: var(--accent);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.75rem;
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.submit {
+  flex: 0 0 auto;
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.status {
+  min-width: 0;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.75rem;
+}
+
+.status a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.ok {
+  color: var(--ok);
+}
+
+@media (min-width: 641px) {
+  .actions :global(.action-link),
+  .submit {
+    min-height: 52px;
+    font-size: 14px;
+  }
+
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form {
+    padding: 24px;
+  }
+}
+
+@media (min-width: 64rem) {
+  .contact {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px;
+  }
+
+  .location {
+    font-size: 1.75rem;
+  }
+
+  .actions {
+    gap: 12px;
+  }
+}

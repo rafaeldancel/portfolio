@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion, useAnimationControls, useScroll, useTransform, type Variants } from "motion/react";
+import { useEffect, useRef, useState, useSyncExternalStore, type MouseEvent } from "react";
+import { AnimatePresence, motion, useAnimationControls, useScroll, useTransform, type Variants } from "motion/react";
 import { profile, siteContent } from "@/content";
 import { PipelineLog } from "@/components/PipelineLog";
-import { ExternalArrow } from "@/components/ExternalArrow";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { motionEase, useActiveWillChange, useSmoothScrollProgress } from "@/lib/scroll-motion";
 
@@ -21,6 +20,59 @@ const cueEntrance: Variants = {
   hidden: { opacity: 0, y: 4 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.2, delay: 0.5, ease: motionEase } },
 };
+
+const titleVariants: Variants = {
+  enter: { y: "100%", opacity: 0 },
+  center: { y: 0, opacity: 1, transition: { duration: 0.5, ease: motionEase } },
+  exit: { y: "-100%", opacity: 0, transition: { duration: 0.5, ease: motionEase } },
+};
+const titleHold = 3000;
+const titleSwap = 500;
+
+function subscribeVisibility(onChange: () => void) {
+  document.addEventListener("visibilitychange", onChange);
+  return () => document.removeEventListener("visibilitychange", onChange);
+}
+
+function RotatingTitle() {
+  const titles = siteContent.heroTitles;
+  const reducedMotion = useReducedMotion();
+  const visible = useSyncExternalStore(subscribeVisibility, () => document.visibilityState === "visible", () => false);
+  const [index, setIndex] = useState(0);
+  const rotating = reducedMotion === false;
+
+  useEffect(() => {
+    if (!rotating || !visible) return;
+    const timer = setTimeout(() => setIndex((current) => (current + 1) % titles.length), titleHold + titleSwap);
+    return () => clearTimeout(timer);
+  }, [index, rotating, titles.length, visible]);
+
+  const title = rotating ? titles[index] : titles[0];
+  const longest = titles.reduce((a, b) => (b.length > a.length ? b : a));
+  return (
+    <>
+      <span className="sr-only">{titles[0]}</span>
+      {/* Every title shares one grid cell sized by the longest, so swaps never shift layout. */}
+      <span className="hero-role-rotator" aria-hidden="true">
+        <span className="hero-role-sizer">{longest}</span>
+        <AnimatePresence initial={false}>
+          <motion.span key={title} className="hero-role-word" variants={titleVariants} initial="enter" animate="center" exit="exit">
+            {title}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+    </>
+  );
+}
+
+function scrollToSection(event: MouseEvent<HTMLAnchorElement>, reducedMotion: boolean | null) {
+  const hash = event.currentTarget.hash;
+  const target = document.querySelector(hash);
+  if (!target) return;
+  event.preventDefault();
+  target.scrollIntoView({ behavior: reducedMotion === false ? "smooth" : "auto", block: "start" });
+  window.history.pushState(window.history.state, "", hash);
+}
 
 export function Hero() {
   const hero = useRef<HTMLElement>(null);
@@ -60,12 +112,11 @@ export function Hero() {
         <motion.h1 id="page-title" variants={entrance} aria-label={profile.name}>
           {profile.name.split(" ").map((part, index) => <span key={part}>{index > 0 && " "}{part}</span>)}
         </motion.h1>
-        <motion.p className="hero-role" variants={entrance}>{siteContent.heroTitle}</motion.p>
+        <motion.p className="hero-role" variants={entrance}><RotatingTitle /></motion.p>
         <motion.p className="hero-specialties" variants={entrance}>{siteContent.specialties}</motion.p>
         <motion.div className="hero-links" variants={entrance}>
-          <a className="action-link action-primary" href={`mailto:${profile.email}`}>{siteContent.emailLabel}<ExternalArrow /></a>
-          <a className="action-link" href={profile.linkedin}>{siteContent.linkedinLabel}<ExternalArrow /></a>
-          <a className="action-link" href={profile.github}>{siteContent.githubLabel}<ExternalArrow /></a>
+          <a className="action-link action-primary" href="#contact" onClick={(event) => scrollToSection(event, reducedMotion)}>{siteContent.connectLabel}</a>
+          <a className="action-link" href="#work" onClick={(event) => scrollToSection(event, reducedMotion)}>{siteContent.viewWorkLabel}</a>
         </motion.div>
       </motion.div>
       <PipelineLog opacity={reducedMotion === false ? pipelineOpacity : 1} />

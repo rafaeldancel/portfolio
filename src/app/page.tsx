@@ -24,7 +24,7 @@ export default function Home() {
         <main id="main-content" className="page-container" tabIndex={-1}>
           <Hero />
           {sections.map((section) => (
-            <Section key={section.id} {...section} reveal={section.id !== "contact" ? "print" : undefined} revealItems={section.id === "experience" ? experience.length + 1 : section.id === "stack" ? Object.keys(stack).length : undefined}>{sectionContent[section.id]}</Section>
+            <Section key={section.id} {...section} reveal="print" revealItems={section.id === "experience" ? experience.length + 1 : section.id === "stack" ? Object.keys(stack).length : section.id === "contact" ? 2 : undefined}>{sectionContent[section.id]}</Section>
           ))}
         </main>
       </HighlightProvider>

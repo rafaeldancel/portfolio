@@ -10,7 +10,9 @@ import { usePrintInRow } from "@/lib/usePrintIn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import styles from "@/components/WorkCarousel.module.css";
 
-const projects = ["vestra", "a", "logos"].map((id) => work.find((item) => item.id === id)!);
+const projects = ["vestra", "a", "logos"]
+  .map((id) => work.find((item) => item.id === id)!)
+  .filter((item) => !item.hidden);
 const slideVariants: Variants = {
   enter: (direction: number) => ({ x: direction * 48, opacity: 0 }),
   center: { x: 0, opacity: 1, transition: { duration: 0.45, ease: motionEase } },
@@ -120,7 +122,7 @@ export function WorkGrid() {
               the server, across fonts/breakpoints, without a measuring effect. */}
           {projects.map((project, projectIndex) => (
             <div className={styles.sizer} aria-hidden="true" inert key={project.id}>
-              <WorkCard item={project} index={projectIndex} measuring />
+              <WorkCard item={project} index={projectIndex} total={projects.length} measuring />
             </div>
           ))}
           <AnimatePresence key={animated ? "animated" : "instant"} initial={animated} custom={direction}>
@@ -148,7 +150,7 @@ export function WorkGrid() {
                 select(index + step, step);
               }}
             >
-              <WorkCard item={item} index={index} active={inView} />
+              <WorkCard item={item} index={index} total={projects.length} active={inView} />
             </motion.div>
           </AnimatePresence>
         </div>

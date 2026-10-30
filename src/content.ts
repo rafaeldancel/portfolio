@@ -14,6 +14,7 @@ export type WorkItem = Readonly<{
   status?: "in-progress";
   live?: string;
   model?: string;
+  hidden?: boolean;
   metric: WorkMetric | null;
   points: readonly string[];
   stack: readonly string[];
@@ -70,6 +71,7 @@ export const work: readonly WorkItem[] = [
     ],
     stack: ["YOLO", "ONNX", "WebGPU", "TypeScript", "Vitest"] },
   { id: "logos", kind: "bootcamp · personal", title: "Logos", context: "RAG mentorship assistant · Hytel AI Bootcamp, Feb–Mar 2026",
+    hidden: true,
     metric: null,
     points: ["Ingestion pipeline with chunking, embeddings and Firestore.", "React / TypeScript Turborepo frontend."],
     stack: ["RAG", "Embeddings", "Firestore", "React", "TypeScript"] },
@@ -87,11 +89,16 @@ export const siteContent = {
   identity: "rafael.dancel",
   available: "available",
   commandHint: "⌘K",
-  heroLabel: "CAVITE, PH",
-  heroTitle: "Gen AI Developer",
+  heroLabel: "~/portfolio · 2026",
+  // The first title is the static, screen-reader and reduced-motion title.
+  heroTitles: ["Gen AI Developer", "AI Engineer"],
   heroScrollCue: "↓ SCROLL · 01 / EXPERIENCE",
   specialties: "Full-stack · Agentic systems · Automation",
+  connectLabel: "Connect with Raf ↓",
+  viewWorkLabel: "View work",
   emailLabel: "Email",
+  copiedLabel: "copied",
+  emailCopied: "Email address copied",
   linkedinLabel: "LinkedIn",
   githubLabel: "GitHub",
   building: "STATUS: BUILDING",
@@ -104,6 +111,19 @@ export const siteContent = {
   modelLabel: "model",
   pipelineCheck: "✓",
   nda: "Under NDA: anonymized, no code or screenshots",
+  contactLocation: "Based in Philippines · UTC+8",
+  formLabel: "Send a message",
+  nameLabel: "Name",
+  formEmailLabel: "Email",
+  messageLabel: "Message",
+  sendLabel: "Send",
+  sendingLabel: "sending…",
+  sentMailto: "opening your mail app…",
+  sentWeb3forms: "sent ✓",
+  sendError: "Could not send the message.",
+  sendFallback: "Email me directly",
+  requiredError: "required",
+  emailError: "enter a valid email",
   footer: "built with Next.js · Tailwind · Framer Motion · AI-assisted, human-reviewed",
 } as const;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useIsPresent, type Variants } from "motion/react";
-import { siteContent, work, type WorkItem } from "@/content";
+import { siteContent, type WorkItem } from "@/content";
 import { ExternalArrow } from "@/components/ExternalArrow";
 import { MetricDelta } from "@/components/MetricDelta";
 import { matchesWorkStack, useHighlight } from "@/lib/highlight-context";
@@ -22,9 +22,10 @@ const fadeVariants: Variants = {
   center: (delay: number) => ({ opacity: 1, transition: { duration: 0.3, delay, ease: motionEase } }),
 };
 
-export function WorkCard({ item, index, active = false, measuring = false }: {
+export function WorkCard({ item, index, total, active = false, measuring = false }: {
   item: WorkItem;
   index: number;
+  total: number;
   active?: boolean;
   measuring?: boolean;
 }) {
@@ -41,7 +42,7 @@ export function WorkCard({ item, index, active = false, measuring = false }: {
       className={styles.card}
       role="group"
       aria-roledescription="slide"
-      aria-label={`${index + 1} / ${work.length}: ${item.title}`}
+      aria-label={`${index + 1} / ${total}: ${item.title}`}
       aria-labelledby={measuring ? undefined : `work-${item.id}-title`}
       aria-hidden={!present || measuring ? true : undefined}
       inert={!present || measuring ? true : undefined}
