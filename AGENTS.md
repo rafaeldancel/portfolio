@@ -112,7 +112,7 @@ export const experience = [
 ];
 
 export const stack = {
-  "ai/llm": ["Amazon Bedrock", "Claude", "OpenAI", "Gemini", "RAG", "Qdrant", "Bedrock Knowledge Bases", "LLM evaluation", "OCR", "YOLO"],
+  "ai/llm": ["Amazon Bedrock", "Claude", "OpenAI", "Gemini", "RAG", "Qdrant", "Bedrock Knowledge Bases", "LLM evaluation", "YOLO"],
   "full-stack": ["JavaScript", "TypeScript", "Python", "Next.js", "React", "Tailwind", "tRPC", "Prisma", "PostgreSQL", "Supabase", "Zod", "Auth.js", "Docker"],
   "cloud": ["AWS", "Google Cloud Platform"],
   "tooling": ["Claude Code", "Codex", "Cursor", "Antigravity", "Vitest", "GitLab", "GitHub", "pgAdmin", "Figma"],
