@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { motion, useAnimationControls, useScroll, useTransform, type Variants } from "motion/react";
 import { profile, siteContent } from "@/content";
 import { PipelineLog } from "@/components/PipelineLog";
@@ -62,6 +62,22 @@ function TypewriterTitle() {
     return () => clearTimeout(timer);
   }, [animated, state, titles, visible]);
 
+  const typed = useRef<HTMLSpanElement>(null);
+  const caret = useRef<HTMLSpanElement>(null);
+
+  // While typing, the cursor sits at the start of its own box and follows the
+  // text by transform only, so it never moves in layout (no layout shift).
+  // ResizeObserver runs after layout and before paint, so it never lags a frame.
+  useLayoutEffect(() => {
+    const text = typed.current;
+    if (!animated || !text) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (caret.current) caret.current.style.transform = `translateX(${entry.contentRect.width}px)`;
+    });
+    observer.observe(text);
+    return () => observer.disconnect();
+  }, [animated]);
+
   const text = animated ? titles[state.title].slice(0, state.length) : titles[0];
   const longest = titles.reduce((a, b) => (b.length > a.length ? b : a));
   const blinking = animated && state.phase === "holding";
@@ -71,7 +87,8 @@ function TypewriterTitle() {
       {/* The typed line shares one grid cell with the longest title, so typing never shifts layout. */}
       <span className="hero-type" aria-hidden="true">
         <span className="hero-type-sizer">{longest}<span className="hero-type-cursor" /></span>
-        <span className="hero-type-text">{text}<span className="hero-type-cursor" data-blink={blinking ? "true" : undefined} /></span>
+        <span ref={typed} className="hero-type-text">{text}{!animated && <span className="hero-type-cursor" />}</span>
+        {animated && <span ref={caret} className="hero-type-caret"><span className="hero-type-cursor" data-blink={blinking ? "true" : undefined} /></span>}
       </span>
     </>
   );

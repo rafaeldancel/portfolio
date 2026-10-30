@@ -155,7 +155,7 @@
 }
 
 .index {
-  color: var(--fg-dim);
+  color: var(--fg-muted);
 }
 
 .label p {
@@ -261,7 +261,7 @@
 
 .pointIndex {
   padding-top: 2px;
-  color: var(--fg-dim);
+  color: var(--fg-muted);
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 11px;
 }

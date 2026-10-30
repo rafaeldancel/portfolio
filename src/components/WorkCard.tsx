@@ -38,7 +38,7 @@ export function WorkCard({ item, index, total, active = false, measuring = false
   const linksDelay = stackDelay + item.stack.length * 0.025 + 0.06;
 
   return (
-    <article
+    <div
       className={styles.card}
       role="group"
       aria-roledescription="slide"
@@ -91,6 +91,6 @@ export function WorkCard({ item, index, total, active = false, measuring = false
           </motion.div>
         )}
       </div>
-    </article>
+    </div>
   );
 }

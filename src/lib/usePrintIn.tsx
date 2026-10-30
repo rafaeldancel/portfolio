@@ -5,7 +5,7 @@ import { animate, cubicBezier, useInView, useMotionValue, useScroll, useTransfor
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { motionEase, useActiveWillChange, useSmoothScrollProgress } from "@/lib/scroll-motion";
 
-export const printTiming = { line: 0.8, stagger: 0.22, character: 0.045, reveal: 0.6, settle: 180, token: 0.03 } as const;
+const printTiming = { line: 0.8, stagger: 0.22, character: 0.045, reveal: 0.6, settle: 180, token: 0.03 } as const;
 
 type PrintTimeline = Readonly<{
   items: number;
@@ -78,7 +78,9 @@ export function usePrintInRow(target: RefObject<HTMLElement | null>, index: numb
   const end = (index * printTiming.stagger + printTiming.reveal) / duration;
   const revealProgress = useTransform(progress, [start, end], [0, 1]);
   const clipPath = useTransform(revealProgress, [0, 1], ["inset(0 100% 0 0)", "inset(0 0% 0 0)"]);
-  const opacity = useTransform(progress, [0, 1], [0.3, 1]);
+  // At exactly 0 the row is fully clipped, so 0 looks identical to the 0.3 floor
+  // but keeps contrast checkers off text that is not on screen yet.
+  const opacity = useTransform(progress, [0, 0.001, 1], [0, 0.3007, 1]);
   const y = useTransform(progress, [0, 1], [16, 0]);
   const characters = useMotionValue(hash.length);
   const typedHash = useTransform(characters, (count) => hash.slice(0, Math.floor(count + 0.000001)));

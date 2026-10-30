@@ -2,14 +2,14 @@ import { profile } from "@/content";
 
 export type MessageProvider = "mailto" | "web3forms";
 
-export type MessageInput = Readonly<{
+type MessageInput = Readonly<{
   name: string;
   email: string;
   message: string;
   botcheck: boolean;
 }>;
 
-export type SendResult =
+type SendResult =
   | Readonly<{ ok: true; provider: MessageProvider; skipped?: true }>
   | Readonly<{ ok: false; provider: MessageProvider; error: string }>;
 
@@ -33,7 +33,7 @@ type Web3FormsResponse = Readonly<{
 const web3formsKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 const web3formsEndpoint = "https://api.web3forms.com/submit";
 
-export const messageProvider: MessageProvider = web3formsKey ? "web3forms" : "mailto";
+const messageProvider: MessageProvider = web3formsKey ? "web3forms" : "mailto";
 
 function subjectFor(name: string) {
   return `Portfolio message from ${name}`;

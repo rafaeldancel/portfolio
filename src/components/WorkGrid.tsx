@@ -2,17 +2,15 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView, type Variants } from "motion/react";
-import { sections, work } from "@/content";
+import { sections } from "@/content";
 import { WorkCard } from "@/components/WorkCard";
 import { matchesWorkStack, useHighlight } from "@/lib/highlight-context";
+import { projects } from "@/lib/projects";
 import { motionEase } from "@/lib/scroll-motion";
 import { usePrintInRow } from "@/lib/usePrintIn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import styles from "@/components/WorkCarousel.module.css";
 
-export const projects = ["vestra", "a", "logos"]
-  .map((id) => work.find((item) => item.id === id)!)
-  .filter((item) => !item.hidden);
 const slideVariants: Variants = {
   enter: (direction: number) => ({ x: direction * 48, opacity: 0 }),
   center: { x: 0, opacity: 1, transition: { duration: 0.45, ease: motionEase } },

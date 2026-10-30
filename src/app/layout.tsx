@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { profile, siteContent } from "@/content";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const sans = IBM_Plex_Sans({
@@ -19,9 +20,26 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const title = `${profile.name} · ${siteContent.heroTitles[0]}`;
+
 export const metadata: Metadata = {
-  title: `${profile.name} · ${profile.title}`,
+  metadataBase: siteUrl,
+  title,
   description: siteContent.description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title,
+    description: siteContent.description,
+    siteName: profile.name,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description: siteContent.description,
+  },
 };
 
 export default function RootLayout({

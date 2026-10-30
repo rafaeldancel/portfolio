@@ -33,7 +33,8 @@ export function MetricDelta({ from, to, value, unit, label, active = true, delay
 
   return (
     <div className={styles.metric}>
-      <p className={styles.metricValue} aria-label={`${from !== undefined ? `${from} → ` : ""}${finalValue} ${unit}`}>
+      <p className={styles.metricValue}>
+        <span className="sr-only">{`${from !== undefined ? `${from} → ` : ""}${finalValue} ${unit}`}</span>
         {from !== undefined && <><span className={styles.metricFrom} aria-hidden="true">{from.toFixed(precision)}</span><span className={styles.metricArrow} aria-hidden="true">→</span></>}
         <motion.span className={styles.metricTo} aria-hidden="true" style={{ minWidth: `${Math.max(initialValue.toFixed(precision).length, finalValue.toFixed(precision).length)}ch` }}>{formatted}</motion.span>
       </p>

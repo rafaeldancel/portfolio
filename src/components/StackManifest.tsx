@@ -3,8 +3,8 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { motion, useInView, useTransform } from "motion/react";
 import { siteContent, stack } from "@/content";
-import { projects } from "@/components/WorkGrid";
 import { matchesWorkStack, useHighlight } from "@/lib/highlight-context";
+import { projects } from "@/lib/projects";
 import { iconHoverColor, stackIcons } from "@/lib/stack-icons";
 import { usePrintInRow, usePrintInToken } from "@/lib/usePrintIn";
 import { usePageVisible } from "@/lib/navigation";

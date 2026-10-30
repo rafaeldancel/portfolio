@@ -1,17 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Command } from "cmdk";
-import { profile, sections, siteContent } from "@/content";
-import { projects } from "@/components/WorkGrid";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { profile, siteContent } from "@/content";
 import { scrollToHash } from "@/lib/navigation";
 import { useReducedMotion } from "@/lib/useReducedMotion";
-import styles from "@/components/CommandPalette.module.css";
+
+const loadDialog = () => import("@/components/CommandPaletteDialog");
+// cmdk and its Radix dialog stay out of the initial bundle: they load when the
+// browser is idle, or on the first open if that comes sooner.
+// React.lazy, not next/dynamic: it only ever renders after a client interaction,
+// so SSR handling is not needed and the extra loader runtime is not shipped.
+const CommandPaletteDialog = lazy(loadDialog);
 
 const copiedHold = 700;
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [search, setSearch] = useState("");
   const reducedMotion = useReducedMotion();
@@ -26,9 +31,20 @@ export function CommandPalette() {
       returnFocus.current = active instanceof HTMLElement && active !== document.body ? active : trigger.current;
       // Reopening during the close animation would otherwise keep the last search.
       setSearch("");
+      setMounted(true);
     }
     setOpen(next);
   }, [open]);
+
+  useEffect(() => {
+    const preload = () => void loadDialog();
+    if ("requestIdleCallback" in window) {
+      const handle = window.requestIdleCallback(preload, { timeout: 4000 });
+      return () => window.cancelIdleCallback(handle);
+    }
+    const timer = setTimeout(preload, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -79,49 +95,26 @@ export function CommandPalette() {
 
   return (
     <>
-      <button ref={trigger} type="button" className="command-hint" aria-label={siteContent.commandHintLabel} aria-haspopup="dialog" aria-expanded={open} onClick={() => show(true)}>
-        {siteContent.commandHint}
+      <button ref={trigger} type="button" className="command-hint" aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="Meta+K Control+K" onClick={() => show(true)}>
+        {/* The glyph alone is not a name; the accessible name is the hidden text. */}
+        <span aria-hidden="true">{siteContent.commandHint}</span>
+        <span className="sr-only">{siteContent.commandHintLabel}</span>
       </button>
-      <Command.Dialog
-        open={open}
-        onOpenChange={show}
-        label={siteContent.paletteLabel}
-        loop
-        overlayClassName={styles.overlay}
-        contentClassName={styles.dialog}
-        className={styles.command}
-      >
-        <Command.Input className={styles.input} placeholder={siteContent.palettePlaceholder} value={search} onValueChange={setSearch} />
-        <Command.List className={styles.list}>
-          <Command.Empty className={styles.empty}>{siteContent.paletteEmpty}</Command.Empty>
-          <Command.Group heading={siteContent.paletteNavigate} className={styles.group}>
-            {sections.map((section) => (
-              <Command.Item key={section.id} value={`${siteContent.paletteNavigate} ${section.label}`} className={styles.item} onSelect={() => run(() => scrollToHash(`#${section.id}`, reducedMotion))}>
-                <span className={styles.index}>{section.index}</span>{section.label}
-              </Command.Item>
-            ))}
-          </Command.Group>
-          <Command.Group heading={siteContent.paletteProjects} className={styles.group}>
-            {projects.map((project, index) => (
-              <Command.Item key={project.id} value={`${siteContent.paletteProjects} ${project.title}`} className={styles.item} onSelect={() => run(() => openProject(project.id))}>
-                <span className={styles.index}>{String(index + 1).padStart(2, "0")}</span>{project.title}
-              </Command.Item>
-            ))}
-          </Command.Group>
-          <Command.Group heading={siteContent.paletteActions} className={styles.group}>
-            <Command.Item value={siteContent.copyEmailLabel} className={styles.item} onSelect={copyEmail}>
-              {siteContent.copyEmailLabel}
-              <span className={styles.meta}>{copied ? siteContent.copiedLabel : profile.email}</span>
-            </Command.Item>
-            <Command.Item value={siteContent.openLinkedinLabel} className={styles.item} onSelect={() => openExternal(profile.linkedin)}>
-              {siteContent.openLinkedinLabel}
-            </Command.Item>
-            <Command.Item value={siteContent.openGithubLabel} className={styles.item} onSelect={() => openExternal(profile.github)}>
-              {siteContent.openGithubLabel}
-            </Command.Item>
-          </Command.Group>
-        </Command.List>
-      </Command.Dialog>
+      {mounted && (
+        <Suspense fallback={null}>
+          <CommandPaletteDialog
+            open={open}
+            onOpenChange={show}
+            search={search}
+            onSearchChange={setSearch}
+            copied={copied}
+            onSection={(id) => run(() => scrollToHash(`#${id}`, reducedMotion))}
+            onProject={(id) => run(() => openProject(id))}
+            onCopyEmail={copyEmail}
+            onExternal={openExternal}
+          />
+        </Suspense>
+      )}
     </>
   );
 }

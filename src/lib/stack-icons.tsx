@@ -53,11 +53,8 @@ export const stackIcons: Readonly<Record<string, IconDefinition>> = {
   Figma: simple(SiFigma, SiFigmaHex),
 };
 
-// Intentionally text-only concepts; no unrelated brand marks are substituted.
-export const conceptsWithoutIcons = ["RAG", "LLM evaluation", "OCR"] as const;
-// No separate Knowledge Bases mark was substituted; Auth.js publishes a PNG,
-// but no official brand SVG was found. See components/icons/SOURCES.md.
-export const brandsWithoutIcons = ["Bedrock Knowledge Bases", "Auth.js"] as const;
+// Text-only on purpose: concepts (RAG, LLM evaluation) get no substitute mark;
+// Bedrock Knowledge Bases and Auth.js have no official brand SVG. See components/icons/SOURCES.md.
 
 function luminance(hex: string) {
   const expanded = hex.replace(/^#/, "");

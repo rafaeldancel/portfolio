@@ -198,3 +198,9 @@ export const pipelineRuns: readonly PipelineJob[] = [
 ] as const;
 
 
+export const notFoundContent = {
+  error: "error:",
+  message: "route not found",
+  pathLabel: "path:",
+  home: "cd ~",
+} as const;
