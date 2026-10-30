@@ -1,0 +1,59 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { motion, useAnimationControls, type Variants } from "motion/react";
+import { profile, siteContent } from "@/content";
+import { PipelineLog } from "@/components/PipelineLog";
+import { ExternalArrow } from "@/components/ExternalArrow";
+import { useReducedMotion } from "@/lib/useReducedMotion";
+
+const entrance: Variants = {
+  hidden: { opacity: 0, y: 4 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } },
+};
+
+const sequence: Variants = {
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+export function Hero() {
+  const reducedMotion = useReducedMotion();
+  const controls = useAnimationControls();
+  const entered = useRef(false);
+
+  useEffect(() => {
+    if (reducedMotion === null) return;
+    if (reducedMotion || entered.current) {
+      controls.set("visible");
+      entered.current = true;
+      return;
+    }
+
+    let cancelled = false;
+    controls.set("hidden");
+    void controls.start("visible").then(() => {
+      if (!cancelled) entered.current = true;
+    });
+    return () => {
+      cancelled = true;
+      controls.stop();
+    };
+  }, [controls, reducedMotion]);
+
+  return (
+    <section id="home" aria-labelledby="page-title" className="hero grid-12">
+      <motion.div className="hero-copy" initial={false} animate={controls} variants={sequence}>
+        <motion.p className="mono-label" variants={entrance}>{siteContent.heroLabel}</motion.p>
+        <motion.h1 id="page-title" variants={entrance}>{profile.name}</motion.h1>
+        <motion.p className="hero-role" variants={entrance}>{siteContent.heroTitle}</motion.p>
+        <motion.p className="hero-specialties" variants={entrance}>{siteContent.specialties}</motion.p>
+        <motion.div className="hero-links" variants={entrance}>
+          <a className="action-link action-primary" href={`mailto:${profile.email}`}>{siteContent.emailLabel}<ExternalArrow /></a>
+          <a className="action-link" href={profile.linkedin}>{siteContent.linkedinLabel}<ExternalArrow /></a>
+          <a className="action-link" href={profile.github}>{siteContent.githubLabel}<ExternalArrow /></a>
+        </motion.div>
+      </motion.div>
+      <PipelineLog />
+    </section>
+  );
+}
