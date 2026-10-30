@@ -1,9 +1,10 @@
 import type { ComponentType, SVGProps } from "react";
 import {
-  SiClaudecode, SiClaudecodeHex, SiCursor, SiCursorHex,
+  SiClaude, SiClaudeHex, SiClaudecode, SiClaudecodeHex, SiCursor, SiCursorHex,
   SiDocker, SiDockerHex, SiFigma, SiFigmaHex, SiGithub, SiGithubHex,
   SiGitlab, SiGitlabHex, SiGooglecloud, SiGooglecloudHex, SiGooglegemini, SiGooglegeminiHex,
   SiNextdotjs, SiNextdotjsHex, SiPostgresql, SiPostgresqlHex, SiPrisma, SiPrismaHex,
+  SiJavascript, SiJavascriptHex, SiPython, SiPythonHex,
   SiQdrant, SiQdrantHex, SiReact, SiReactHex, SiSupabase, SiSupabaseHex,
   SiTailwindcss, SiTailwindcssHex, SiTrpc, SiTrpcHex, SiTypescript, SiTypescriptHex,
   SiVitest, SiVitestHex, SiYolo, SiYoloHex, SiZod, SiZodHex,
@@ -11,17 +12,25 @@ import {
 import { AwsIcon } from "@/components/icons/AwsIcon";
 import { AntigravityIcon } from "@/components/icons/AntigravityIcon";
 import { CodexIcon } from "@/components/icons/CodexIcon";
+import { OpenAIIcon } from "@/components/icons/OpenAIIcon";
+import { AmazonBedrockIcon } from "@/components/icons/AmazonBedrockIcon";
+import { PgAdminIcon } from "@/components/icons/PgAdminIcon";
 
 type StackIcon = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
-type IconDefinition = Readonly<{ Icon: StackIcon; color: string; source: "simple-icons" | "devicon" }>;
+type IconDefinition = Readonly<{ Icon: StackIcon; color: string; source: "simple-icons" | "devicon" | "official" }>;
 
 const simple = (Icon: StackIcon, color: string): IconDefinition => ({ Icon, color, source: "simple-icons" });
 
 export const stackIcons: Readonly<Record<string, IconDefinition>> = {
+  "Amazon Bedrock": { Icon: AmazonBedrockIcon, color: "#01A88D", source: "official" },
+  Claude: simple(SiClaude, SiClaudeHex),
+  OpenAI: { Icon: OpenAIIcon, color: "#FFFFFF", source: "official" },
   Gemini: simple(SiGooglegemini, SiGooglegeminiHex),
   Qdrant: simple(SiQdrant, SiQdrantHex),
   YOLO: simple(SiYolo, SiYoloHex),
   "Next.js": simple(SiNextdotjs, SiNextdotjsHex),
+  JavaScript: simple(SiJavascript, SiJavascriptHex),
+  Python: simple(SiPython, SiPythonHex),
   React: simple(SiReact, SiReactHex),
   TypeScript: simple(SiTypescript, SiTypescriptHex),
   Tailwind: simple(SiTailwindcss, SiTailwindcssHex),
@@ -40,13 +49,15 @@ export const stackIcons: Readonly<Record<string, IconDefinition>> = {
   Vitest: simple(SiVitest, SiVitestHex),
   GitLab: simple(SiGitlab, SiGitlabHex),
   GitHub: simple(SiGithub, SiGithubHex),
+  pgAdmin: { Icon: PgAdminIcon, color: "#336791", source: "official" },
   Figma: simple(SiFigma, SiFigmaHex),
 };
 
 // Intentionally text-only concepts; no unrelated brand marks are substituted.
-export const conceptsWithoutIcons = ["RAG", "Embeddings", "Structured output", "LLM evaluation", "OCR"] as const;
-// Checked against the installed Simple Icons exports and Devicon catalogue.
-export const brandsWithoutIcons = ["AWS Bedrock (Claude)", "Bedrock KB", "OpenAI", "Auth.js", "pgAdmin"] as const;
+export const conceptsWithoutIcons = ["RAG", "LLM evaluation", "OCR"] as const;
+// No separate Knowledge Bases mark was substituted; Auth.js publishes a PNG,
+// but no official brand SVG was found. See components/icons/SOURCES.md.
+export const brandsWithoutIcons = ["Bedrock Knowledge Bases", "Auth.js"] as const;
 
 function luminance(hex: string) {
   const expanded = hex.replace(/^#/, "");

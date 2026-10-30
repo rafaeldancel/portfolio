@@ -6,7 +6,7 @@ import { StackManifest } from "@/components/StackManifest";
 import { WorkGrid } from "@/components/WorkGrid";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-import { experience, sections } from "@/content";
+import { experience, sections, stack } from "@/content";
 import { HighlightProvider } from "@/lib/highlight-context";
 
 const sectionContent = {
@@ -24,7 +24,7 @@ export default function Home() {
         <main id="main-content" className="page-container" tabIndex={-1}>
           <Hero />
           {sections.map((section) => (
-            <Section key={section.id} {...section} reveal={section.id === "experience" ? "print" : undefined} revealItems={section.id === "experience" ? experience.length + 1 : undefined}>{sectionContent[section.id]}</Section>
+            <Section key={section.id} {...section} reveal={section.id === "experience" || section.id === "stack" ? "print" : undefined} revealItems={section.id === "experience" ? experience.length + 1 : section.id === "stack" ? Object.keys(stack).length : undefined}>{sectionContent[section.id]}</Section>
           ))}
         </main>
       </HighlightProvider>

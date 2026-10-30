@@ -21,7 +21,7 @@ function PrintSection({ id, index, label, children, revealItems = 1 }: SectionPr
       <section ref={ref} id={id} aria-labelledby={`${id}-heading`} className="section-shell">
         <h2 id={`${id}-heading`} className="section-label">
           <span>{index} / {label}</span>
-          <motion.span aria-hidden="true" className="section-line" style={{ scaleX: timeline.lineScale }} />
+          <motion.span aria-hidden="true" className="section-line" style={{ scaleX: timeline.lineScale, willChange: timeline.lineWillChange }} />
         </h2>
         <div className="section-body grid-12">{children}</div>
       </section>

@@ -38,8 +38,8 @@ export const experience = [
 ];
 
 export const stack = {
-  "ai/llm": ["AWS Bedrock (Claude)", "OpenAI", "Gemini", "RAG", "Embeddings", "Qdrant", "Bedrock KB", "Structured output", "LLM evaluation", "OCR", "YOLO"],
-  "full-stack": ["Next.js", "React", "TypeScript", "Tailwind", "tRPC", "Prisma", "PostgreSQL", "Supabase", "Zod", "Auth.js", "Docker"],
+  "ai/llm": ["Amazon Bedrock", "Claude", "OpenAI", "Gemini", "RAG", "Qdrant", "Bedrock Knowledge Bases", "LLM evaluation", "OCR", "YOLO"],
+  "full-stack": ["JavaScript", "TypeScript", "Python", "Next.js", "React", "Tailwind", "tRPC", "Prisma", "PostgreSQL", "Supabase", "Zod", "Auth.js", "Docker"],
   "cloud": ["AWS", "Google Cloud Platform"],
   "tooling": ["Claude Code", "Codex", "Cursor", "Antigravity", "Vitest", "GitLab", "GitHub", "pgAdmin", "Figma"],
 };
@@ -55,7 +55,7 @@ export const work: readonly WorkItem[] = [
       "Market data pipeline and financial computations end to end; segment figures reconcile exactly to audited filings.",
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
-    stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "AWS Bedrock (Claude)", "Vitest"] },
+    stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "Amazon Bedrock", "Vitest"] },
   { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
     context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
     live: "https://vestra-dresscode.vercel.app",

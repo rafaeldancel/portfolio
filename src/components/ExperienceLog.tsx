@@ -20,12 +20,12 @@ function PrintedRow({ as: Root = "li", hash, index, educationRow = false, childr
   children: ReactNode;
 }) {
   const ref = useRef<HTMLLIElement & HTMLDivElement>(null);
-  const { typedHash, clipPath, opacity, y, finish, resume } = usePrintInRow(ref, index, hash);
+  const { typedHash, clipPath, opacity, y, willChange, clipWillChange, finish, resume } = usePrintInRow(ref, index, hash);
   return (
     <Root ref={ref} className={styles.row} tabIndex={0} onFocus={finish} onBlur={resume} data-print-row={index}>
-      <motion.div className={styles.motion} style={{ opacity, y }}>
+      <motion.div className={styles.motion} style={{ opacity, y, willChange }}>
         <motion.span className={`commit-id ${styles.hash}`} aria-hidden="true">{typedHash}</motion.span>
-        <motion.div className={`${educationRow ? "education-row" : "experience-row"} ${styles.body}`} style={{ clipPath }} data-print-body>
+        <motion.div className={`${educationRow ? "education-row" : "experience-row"} ${styles.body}`} style={{ clipPath, willChange: clipWillChange }} data-print-body>
           {children}
         </motion.div>
       </motion.div>

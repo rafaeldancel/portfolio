@@ -6,10 +6,11 @@ import { profile, siteContent } from "@/content";
 import { PipelineLog } from "@/components/PipelineLog";
 import { ExternalArrow } from "@/components/ExternalArrow";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { motionEase, useActiveWillChange, useSmoothScrollProgress } from "@/lib/scroll-motion";
 
 const entrance: Variants = {
   hidden: { opacity: 0, y: 4 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: motionEase } },
 };
 
 const sequence: Variants = {
@@ -18,16 +19,18 @@ const sequence: Variants = {
 
 const cueEntrance: Variants = {
   hidden: { opacity: 0, y: 4 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.2, delay: 0.5, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2, delay: 0.5, ease: motionEase } },
 };
 
 export function Hero() {
   const hero = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const exitY = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const textOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.2]);
-  const pipelineOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
+  const progress = useSmoothScrollProgress(scrollYProgress, 0);
+  const exitY = useTransform(progress, [0, 1], [0, -40]);
+  const textOpacity = useTransform(progress, [0, 1], [1, 0.2]);
+  const pipelineOpacity = useTransform(progress, [0, 1], [1, 0.4]);
   const reducedMotion = useReducedMotion();
+  const willChange = useActiveWillChange(progress, "transform, opacity", reducedMotion === false);
   const controls = useAnimationControls();
   const entered = useRef(false);
 
@@ -52,7 +55,7 @@ export function Hero() {
 
   return (
     <section ref={hero} id="home" aria-labelledby="page-title" className="hero grid-12">
-      <motion.div className="hero-copy" initial={false} animate={controls} variants={sequence} style={{ y: reducedMotion === false ? exitY : 0, opacity: reducedMotion === false ? textOpacity : 1 }}>
+      <motion.div className="hero-copy" initial={false} animate={controls} variants={sequence} style={{ y: reducedMotion === false ? exitY : 0, opacity: reducedMotion === false ? textOpacity : 1, willChange }}>
         <motion.p className="mono-label" variants={entrance}>{siteContent.heroLabel}</motion.p>
         <motion.h1 id="page-title" variants={entrance} aria-label={profile.name}>
           {profile.name.split(" ").map((part, index) => <span key={part}>{index > 0 && " "}{part}</span>)}
