@@ -1,0 +1,374 @@
+.carousel {
+  min-width: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  padding-inline: 8px;
+  background: var(--bg-raised);
+}
+
+.pager,
+.navigation {
+  display: flex;
+  align-items: center;
+}
+
+.arrow,
+.pagerButton {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  cursor: pointer;
+}
+
+.arrow {
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.arrow:hover,
+.arrow:focus-visible {
+  color: var(--fg);
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--fg-dim);
+  background: transparent;
+}
+
+.pagerButton[aria-current] .dot {
+  border-color: var(--fg);
+  background: var(--fg);
+}
+
+.pagerButton[data-highlighted] .dot {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.pagerButton:hover .dot,
+.pagerButton:focus-visible .dot {
+  border-color: var(--accent);
+}
+
+.counter {
+  display: inline-flex;
+  align-items: center;
+  white-space: pre;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.digit {
+  position: relative;
+  display: inline-block;
+  width: 1ch;
+  height: 20px;
+  overflow: hidden;
+  color: var(--fg);
+}
+
+.digit > span {
+  position: absolute;
+  inset: 0;
+  line-height: 20px;
+}
+
+.viewport {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: clip;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.sizer,
+.slide {
+  min-width: 0;
+  grid-area: 1 / 1;
+}
+
+.sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.slide {
+  z-index: 1;
+  touch-action: pan-y;
+}
+
+.anchor {
+  position: absolute;
+  top: 0;
+  scroll-margin-top: 140px;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-height: 100%;
+  padding: 24px 16px;
+  background: var(--bg);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 180ms;
+}
+
+.card:hover::before,
+.carousel:focus-within .slide .card::before {
+  opacity: 1;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+.index {
+  color: var(--fg-dim);
+}
+
+.label p {
+  text-align: right;
+}
+
+.summary,
+.details {
+  min-width: 0;
+}
+
+.title {
+  max-width: 18ch;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.context {
+  max-width: 48ch;
+  margin-top: 12px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.metricSlot {
+  margin-top: 28px;
+}
+
+.metric {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+
+.metricValue {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.metricFrom,
+.metricArrow {
+  color: var(--fg-muted);
+}
+
+.metricArrow {
+  font-size: 20px;
+}
+
+.metricTo {
+  color: var(--accent);
+}
+
+.metricUnit,
+.metricLabel {
+  margin-top: 8px;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.metricTrack {
+  height: 2px;
+  margin-top: 16px;
+  background: var(--line);
+}
+
+.metricTrack span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+.details {
+  margin-top: 28px;
+}
+
+.points {
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.points li {
+  border-top: 1px solid var(--line);
+}
+
+.point {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 12px;
+}
+
+.pointIndex {
+  padding-top: 2px;
+  color: var(--fg-dim);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+}
+
+.tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.token {
+  max-width: 100%;
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.token[data-highlighted] {
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 14px;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.links a:hover {
+  color: var(--fg);
+}
+
+.nda {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 48rem) {
+  .controls {
+    padding-inline: 16px;
+  }
+
+  .card {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: 40px;
+    padding: 32px;
+  }
+
+  .label {
+    grid-column: 1 / -1;
+    margin-bottom: 32px;
+  }
+
+  .title,
+  .metricValue {
+    font-size: 44px;
+  }
+
+  .metricValue {
+    gap: 12px;
+  }
+
+  .metricFrom {
+    font-size: 28px;
+  }
+
+  .metricSlot {
+    margin-top: 32px;
+  }
+
+  .details {
+    margin-top: 0;
+  }
+
+  .point {
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before {
+    transition: none;
+  }
+}

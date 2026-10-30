@@ -135,11 +135,11 @@ export const work = [
     model: "https://huggingface.co/rafdancel/vestra-y26s",
     metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs thesis YOLOv5s (+17%)" },
     points: [
-      "Retrained on YOLO26s with a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
+      "Trained YOLO26s on a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
       "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs the thesis model, on a 283-image test split.",
       "Runs on-device with WebGPU via ONNX: first inference 1270 ms → 36 ms after a warm-up fix; live camera at 8–10 fps.",
       "Real-world test set (150 images, never trained on): trousers detected 6 → 43 of 54.",
-      "Known gap: leggings mostly read as trousers (2/31). Listed openly.",
+      "Known gap: leggings mostly read as trousers (2/31).",
     ],
     stack: ["YOLO", "ONNX", "WebGPU", "TypeScript", "Vitest"] },
   { id: "logos", kind: "bootcamp · personal", title: "Logos", context: "RAG mentorship assistant · Hytel AI Bootcamp, Feb–Mar 2026",
