@@ -28,7 +28,6 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
 ### Type
 - Mono (data, labels, nav, metrics): **IBM Plex Mono** 400/500
 - Sans (prose, headings): **IBM Plex Sans** 400/500/600
-- Accent (2 to 3 words max on the whole page, e.g. one hero word): **Instrument Serif** italic
 - Scale: 12 / 14 / 16 / 20 / 28 / 44 / 72. Headings tight (-0.02em). Labels in mono, uppercase, 11px, 0.08em tracking.
 
 ### Layout
@@ -49,7 +48,8 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
 1. **Hero**
    - Line 1 (mono label): `CAVITE, PH`
    - Name (sans, 72px desktop): `Rafael Dancel`
-   - Title (Instrument Serif italic, under the name): `Gen AI Developer`
+   - Title (under the name): `Gen AI Developer` in IBM Plex Sans 300 (light), ~64–76px desktop, `--fg-muted`. Instrument Serif is no longer used: remove it from layout.tsx and the font tokens.
+   - Layout: the hero fills the first screen (`min-height: calc(100svh - topbar)`), name ~120–132px desktop over 2 lines, buttons 56–60px tall, PipelineLog panel large (16–17px text) with a header bar (`job: …`) and a footer (`run 1 of 2` + switcher). Bottom of hero: mono `↓ SCROLL · 01 / EXPERIENCE` cue. Mobile: stacked, 3 buttons in one row, compact log below.
    - Subtitle (mono, muted): `Full-stack · Agentic systems · Automation`
    - No extra headline or one-liner for now.
    - Buttons: `Email` (primary, copies + mailto), `LinkedIn`, `GitHub`. No résumé button for now.
@@ -61,7 +61,16 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
      [00:03] run      562s → 113s   (parallelized)
      [00:04] verify   every value quotes a source passage ✓
      ```
-     Timestamps dim, verbs amber, ✓ in `--ok`. Numbers count up/down. Blinking block cursor at the end. Replay button (small, mono). Respects `prefers-reduced-motion` (render final state instantly).
+     Timestamps dim, verbs amber, ✓ in `--ok`. Numbers count up/down. Blinking block cursor at the end. Respects `prefers-reduced-motion` (render final state instantly).
+     Loops between two runs (data in `content.ts` as `pipelineRuns`): run 1 above with header `job: equity-extract`; run 2 header `job: vestra-detect`:
+     ```
+     [00:00] load     vestra-y26s-m1.onnx  38 MB · WebGPU
+     [00:01] warmup   first inference 1270ms → 36ms
+     [00:02] detect   9 classes · live camera 8–10 fps
+     [00:03] eval     mAP@.5:.95 0.468 → 0.547  (+17% vs thesis)
+     [00:04] verify   ONNX ↔ PyTorch parity ✓
+     ```
+     Play → hold 3s → 200ms clear → next run → loop. Fixed panel height. Pause when off-screen or hovered. Mono `1/2` switcher with prev/next instead of replay.
 2. **01 / Experience**: styled like `git log`. Each entry: commit-hash-looking short id (derived, e.g. `a3f9c1`), date range in mono, role, company, 1 to 2 lines. Hover highlights the row with a 1px amber left rule.
 3. **02 / Stack**: rendered as a dependency manifest. Grouped table: `ai/llm`, `full-stack`, `cloud`, `tooling` → items as mono tokens, each with a small (14–16px) monochrome brand icon in `--fg-muted`, turning to the brand color or `--fg` on hover. Concepts without a logo (RAG, Embeddings, Structured output, LLM evaluation, OCR) get no icon, just the token. No logo cloud, no marquee. Hovering a stack item highlights the project cards below that use it (shared state via context). This cross-linking is a key frontend showcase.
 4. **03 / Work**: exactly 3 entries, in order: AI equity research platform, Vestra, Logos. No other WPH client work.
@@ -118,11 +127,19 @@ export const work = [
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
     stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "AWS Bedrock (Claude)", "Vitest"] },
-  { id: "vestra", kind: "personal", title: "Vestra", context: "v2 of UWear, built on my thesis",
-    status: "in-progress", live: "TODO", // Vercel URL, Raf will supply
-    metric: null, points: [], stack: [] },
-  // Placeholder card: dimmed, mono `STATUS: BUILDING` tag, blinking cursor,
-  // non-expandable, no metric. Show a `live ↗` link only once `live` is a real URL.
+  { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
+    context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
+    live: "https://vestra-dresscode.vercel.app",
+    model: "https://huggingface.co/rafdancel/vestra-y26s",
+    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs thesis YOLOv5s (+17%)" },
+    points: [
+      "Retrained on YOLO26s with a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
+      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs the thesis model, on a 283-image test split.",
+      "Runs on-device with WebGPU via ONNX: first inference 1270 ms → 36 ms after a warm-up fix; live camera at 8–10 fps.",
+      "Real-world test set (150 images, never trained on): trousers detected 6 → 43 of 54.",
+      "Known gap: leggings mostly read as trousers (2/31). Listed openly.",
+    ],
+    stack: ["YOLO", "ONNX", "WebGPU", "TypeScript", "Vitest"] },
   { id: "logos", kind: "bootcamp · personal", title: "Logos", context: "RAG mentorship assistant · Hytel AI Bootcamp, Feb–Mar 2026",
     metric: null,
     points: ["Ingestion pipeline with chunking, embeddings and Firestore.", "React / TypeScript Turborepo frontend."],
@@ -132,11 +149,6 @@ export const work = [
 export const education = {
   degree: "BS Computer Science, Intelligent Systems",
   school: "De La Salle University – Dasmariñas", range: "2021–2025", honor: "Dean's Lister",
-  certs: [
-    "AI-Driven Full-Stack Development: Google Cloud, Vertex AI & RAG (Hytel, 2026)",
-    "Google IT Automation with Python (Coursera, 2025)",
-    "TOEIC 860 (B2)",
-  ],
 };
 ```
 Note: fix the stack lists on cards to match only what the case study notes say. Don't add tech not listed in the KT.
@@ -179,5 +191,5 @@ public/ favicon.svg
 7. **Polish + ship (45m)**: reduced motion, a11y pass, Lighthouse, OG image, deploy to Vercel.
 
 ## Things I (Raf) still need to supply
-- Vestra Vercel URL
+- Vestra repo is private: no GitHub link on the card until it's public
 - Later: résumé PDF, Vestra details (placeholder card ships for now)

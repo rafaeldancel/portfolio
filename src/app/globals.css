@@ -23,7 +23,6 @@
   --color-ok: var(--ok);
   --font-sans: var(--font-ibm-plex-sans), sans-serif;
   --font-mono: var(--font-ibm-plex-mono), monospace;
-  --font-serif: var(--font-instrument-serif), serif;
 }
 
 @theme {
@@ -185,9 +184,12 @@
   }
 
   .hero {
+    position: relative;
+    min-height: calc(100svh - 48px);
+    align-content: center;
     align-items: center;
-    padding-block: 56px 64px;
-    row-gap: 40px;
+    padding-block: 24px 72px;
+    row-gap: 24px;
     scroll-margin-top: 72px;
   }
 
@@ -199,51 +201,73 @@
 
   .hero h1 {
     max-width: 780px;
-    margin-top: 20px;
-    font-size: 2.75rem;
+    margin-top: 12px;
+    font-size: 64px;
     font-weight: 500;
-    line-height: 1.04;
-    text-wrap: balance;
+    line-height: 0.9;
+  }
+
+  .hero h1 > span {
+    display: block;
   }
 
   .hero-role {
     margin-top: 12px;
-    font-family: var(--font-instrument-serif), serif;
-    font-size: 1.75rem;
-    font-style: italic;
-    font-weight: 400;
+    color: var(--fg-muted);
+    font-family: var(--font-ibm-plex-sans), sans-serif;
+    font-size: 40px;
+    font-weight: 300;
     letter-spacing: -0.02em;
     line-height: 1.1;
   }
 
   .hero-specialties {
     max-width: 560px;
-    margin-top: 24px;
+    margin-top: 16px;
     color: var(--fg-muted);
     font-family: var(--font-ibm-plex-mono), monospace;
     font-size: 0.875rem;
-    line-height: 1.7;
+    line-height: 1.5;
     text-wrap: balance;
   }
 
   .hero-links {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
-    margin-top: 28px;
+    margin-top: 20px;
   }
 
   .action-link {
     display: inline-flex;
+    flex: 1;
+    min-width: 0;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: center;
+    gap: 8px;
     min-height: 44px;
     border: 1px solid var(--line);
-    padding: 10px 14px;
+    padding: 10px 8px;
     background: var(--bg);
     font-family: var(--font-ibm-plex-mono), monospace;
     font-size: 0.75rem;
+  }
+
+  .action-link svg {
+    flex-shrink: 0;
+  }
+
+  .hero-scroll-cue {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fg-muted);
+    font-family: var(--font-ibm-plex-mono), monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
   }
 
   .action-primary {
@@ -630,18 +654,6 @@
       display: flex;
     }
 
-    .hero {
-      padding-block: 80px;
-    }
-
-    .hero h1 {
-      font-size: 4.5rem;
-    }
-
-    .hero-role {
-      font-size: 2.75rem;
-    }
-
     .pipeline-panel {
       padding: 24px;
     }
@@ -697,18 +709,102 @@
     }
   }
 
-  @media (min-width: 72rem) {
+  @media (min-width: 641px) {
+    .hero {
+      padding-block: 40px 80px;
+      row-gap: 32px;
+    }
+
+    .hero h1 {
+      font-size: 80px;
+    }
+
+    .hero-role {
+      font-size: 48px;
+    }
+
+    .hero-links .action-link {
+      min-height: 52px;
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero-copy,
+    .hero > .pipeline-panel {
+      grid-column: span 6;
+    }
+
+    .hero h1 {
+      margin-top: 20px;
+      font-size: clamp(120px, 9.2vw, 132px);
+    }
+
+    .hero-role {
+      margin-top: 20px;
+      font-size: clamp(64px, 5.28vw, 76px);
+      line-height: 1.08;
+    }
+
+    .hero-specialties {
+      margin-top: 24px;
+      font-size: clamp(18px, 1.32vw, 19px);
+      line-height: 1.6;
+    }
+
+    .hero-links {
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .hero-links .action-link {
+      min-height: 58px;
+      gap: 12px;
+      padding-inline: 16px;
+      font-size: clamp(16px, 1.18vw, 17px);
+    }
+
+    .hero-scroll-cue {
+      bottom: 24px;
+    }
+  }
+
+  @media (min-width: 1280px) {
     .hero-copy {
+      grid-column: span 5;
+    }
+
+    .hero > .pipeline-panel {
       grid-column: span 7;
     }
 
-    .pipeline-panel {
-      grid-column: span 5;
-      padding: 24px 16px;
+    .hero-role {
+      font-size: 64px;
+    }
+  }
+
+  @media (min-width: 64rem) and (max-height: 800px) {
+    .hero {
+      padding-block: 24px 64px;
     }
 
-    .pipeline-row {
-      column-gap: 8px;
+    .hero h1 {
+      font-size: clamp(96px, 7.8vw, 108px);
+    }
+
+    .hero-role {
+      font-size: clamp(48px, 4.35vw, 60px);
+    }
+
+    .hero-links {
+      margin-top: 24px;
+    }
+
+    .hero-links .action-link {
+      min-height: 50px;
+      gap: 8px;
+      padding-inline: 12px;
+      font-size: 14px;
     }
   }
 

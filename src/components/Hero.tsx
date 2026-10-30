@@ -16,6 +16,11 @@ const sequence: Variants = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
+const cueEntrance: Variants = {
+  hidden: { opacity: 0, y: 4 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.2, delay: 0.5, ease: "easeOut" } },
+};
+
 export function Hero() {
   const reducedMotion = useReducedMotion();
   const controls = useAnimationControls();
@@ -44,7 +49,9 @@ export function Hero() {
     <section id="home" aria-labelledby="page-title" className="hero grid-12">
       <motion.div className="hero-copy" initial={false} animate={controls} variants={sequence}>
         <motion.p className="mono-label" variants={entrance}>{siteContent.heroLabel}</motion.p>
-        <motion.h1 id="page-title" variants={entrance}>{profile.name}</motion.h1>
+        <motion.h1 id="page-title" variants={entrance} aria-label={profile.name}>
+          {profile.name.split(" ").map((part, index) => <span key={part}>{index > 0 && " "}{part}</span>)}
+        </motion.h1>
         <motion.p className="hero-role" variants={entrance}>{siteContent.heroTitle}</motion.p>
         <motion.p className="hero-specialties" variants={entrance}>{siteContent.specialties}</motion.p>
         <motion.div className="hero-links" variants={entrance}>
@@ -54,6 +61,9 @@ export function Hero() {
         </motion.div>
       </motion.div>
       <PipelineLog />
+      <motion.a className="hero-scroll-cue" href="#experience" initial={false} animate={controls} variants={cueEntrance}>
+        {siteContent.heroScrollCue}
+      </motion.a>
     </section>
   );
 }

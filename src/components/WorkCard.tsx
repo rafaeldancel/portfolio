@@ -2,10 +2,10 @@ import { siteContent, type WorkItem } from "@/content";
 import { MetricDelta } from "@/components/MetricDelta";
 import { WorkDetail } from "@/components/WorkDetail";
 
-export function WorkCard({ item }: { item: WorkItem }) {
+export function WorkCard({ item, highlighted = false }: { item: WorkItem; highlighted?: boolean }) {
   const building = item.status === "in-progress";
   return (
-    <article id={`work-${item.id}`} aria-labelledby={`work-${item.id}-title`} className={`work-card${building ? " work-building" : ""}`}>
+    <article id={`work-${item.id}`} aria-labelledby={`work-${item.id}-title`} data-highlighted={highlighted ? "true" : undefined} className={`work-card${building ? " work-building" : ""}`}>
       <div className="work-card-header">
         <span className="work-index" aria-hidden="true">{item.id.length === 1 ? item.id.toUpperCase() : "/"}</span>
         <p className="work-kind">{item.kind}</p>

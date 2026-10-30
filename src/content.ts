@@ -13,6 +13,7 @@ export type WorkItem = Readonly<{
   context: string;
   status?: "in-progress";
   live?: string;
+  model?: string;
   metric: WorkMetric | null;
   points: readonly string[];
   stack: readonly string[];
@@ -55,11 +56,19 @@ export const work: readonly WorkItem[] = [
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
     stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "AWS Bedrock (Claude)", "Vitest"] },
-  { id: "vestra", kind: "personal", title: "Vestra", context: "v2 of UWear, built on my thesis",
-    status: "in-progress", live: "TODO", // Vercel URL, Raf will supply
-    metric: null, points: [], stack: [] },
-  // Placeholder card: dimmed, mono `STATUS: BUILDING` tag, blinking cursor,
-  // non-expandable, no metric. Show a `live ↗` link only once `live` is a real URL.
+  { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
+    context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
+    live: "https://vestra-dresscode.vercel.app",
+    model: "https://huggingface.co/rafdancel/vestra-y26s",
+    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs thesis YOLOv5s (+17%)" },
+    points: [
+      "Retrained on YOLO26s with a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
+      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs the thesis model, on a 283-image test split.",
+      "Runs on-device with WebGPU via ONNX: first inference 1270 ms → 36 ms after a warm-up fix; live camera at 8–10 fps.",
+      "Real-world test set (150 images, never trained on): trousers detected 6 → 43 of 54.",
+      "Known gap: leggings mostly read as trousers (2/31). Listed openly.",
+    ],
+    stack: ["YOLO", "ONNX", "WebGPU", "TypeScript", "Vitest"] },
   { id: "logos", kind: "bootcamp · personal", title: "Logos", context: "RAG mentorship assistant · Hytel AI Bootcamp, Feb–Mar 2026",
     metric: null,
     points: ["Ingestion pipeline with chunking, embeddings and Firestore.", "React / TypeScript Turborepo frontend."],
@@ -69,11 +78,6 @@ export const work: readonly WorkItem[] = [
 export const education = {
   degree: "BS Computer Science, Intelligent Systems",
   school: "De La Salle University – Dasmariñas", range: "2021–2025", honor: "Dean's Lister",
-  certs: [
-    "AI-Driven Full-Stack Development: Google Cloud, Vertex AI & RAG (Hytel, 2026)",
-    "Google IT Automation with Python (Coursera, 2025)",
-    "TOEIC 860 (B2)",
-  ],
 };
 
 // Interface copy follows AGENTS.md and Raf's approved hero direction.
@@ -85,12 +89,19 @@ export const siteContent = {
   commandHint: "⌘K",
   heroLabel: "CAVITE, PH",
   heroTitle: "Gen AI Developer",
+  heroScrollCue: "↓ SCROLL · 01 / EXPERIENCE",
   specialties: "Full-stack · Agentic systems · Automation",
   emailLabel: "Email",
   linkedinLabel: "LinkedIn",
   githubLabel: "GitHub",
   building: "STATUS: BUILDING",
-  replay: "replay",
+  previousRun: "Previous run",
+  nextRun: "Next run",
+  pipelineSwitcher: "Pipeline runs",
+  pipelineRunLabel: "run",
+  pipelineRunOf: "of",
+  liveLabel: "live",
+  modelLabel: "model",
   pipelineCheck: "✓",
   nda: "Under NDA: anonymized, no code or screenshots",
   footer: "built with Next.js · Tailwind · Framer Motion · AI-assisted, human-reviewed",
@@ -113,16 +124,43 @@ export type PipelineLine = Readonly<{
     to: number;
     prefix: string;
     suffix: string;
+    precision?: number;
   }>;
 }>;
 
-export const pipeline: readonly PipelineLine[] = [
-  { time: "00:00", verb: "ingest", detail: "annual_report.pdf  ~500 pages" },
-  { time: "00:01", verb: "chunk", detail: "96k → 12k tokens / call",
-    count: { from: 96, to: 12, prefix: "96k → ", suffix: "k tokens / call" } },
-  { time: "00:02", verb: "extract", detail: "6 extractors · source-cited" },
-  { time: "00:03", verb: "run", detail: "562s → 113s   (parallelized)",
-    count: { from: 562, to: 113, prefix: "562s → ", suffix: "s   (parallelized)" } },
-  { time: "00:04", verb: "verify", detail: "every value quotes a source passage", passed: true },
+export type PipelineJob = Readonly<{
+  id: string;
+  header: string;
+  lines: readonly PipelineLine[];
+}>;
+
+export const pipelineRuns: readonly PipelineJob[] = [
+  {
+    id: "equity-extract",
+    header: "job: equity-extract",
+    lines: [
+      { time: "00:00", verb: "ingest", detail: "annual_report.pdf  ~500 pages" },
+      { time: "00:01", verb: "chunk", detail: "96k → 12k tokens / call",
+        count: { from: 96, to: 12, prefix: "96k → ", suffix: "k tokens / call" } },
+      { time: "00:02", verb: "extract", detail: "6 extractors · source-cited" },
+      { time: "00:03", verb: "run", detail: "562s → 113s   (parallelized)",
+        count: { from: 562, to: 113, prefix: "562s → ", suffix: "s   (parallelized)" } },
+      { time: "00:04", verb: "verify", detail: "every value quotes a source passage", passed: true },
+    ],
+  },
+  {
+    id: "vestra-detect",
+    header: "job: vestra-detect",
+    lines: [
+      { time: "00:00", verb: "load", detail: "vestra-y26s-m1.onnx  38 MB · WebGPU" },
+      { time: "00:01", verb: "warmup", detail: "first inference 1270ms → 36ms",
+        count: { from: 1270, to: 36, prefix: "first inference 1270ms → ", suffix: "ms" } },
+      { time: "00:02", verb: "detect", detail: "9 classes · live camera 8–10 fps" },
+      { time: "00:03", verb: "eval", detail: "mAP@.5:.95 0.468 → 0.547  (+17% vs thesis)",
+        count: { from: 0.468, to: 0.547, precision: 3, prefix: "mAP@.5:.95 0.468 → ", suffix: "  (+17% vs thesis)" } },
+      { time: "00:04", verb: "verify", detail: "ONNX ↔ PyTorch parity", passed: true },
+    ],
+  },
 ] as const;
+
 

@@ -7,6 +7,7 @@ import { WorkGrid } from "@/components/WorkGrid";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { sections } from "@/content";
+import { HighlightProvider } from "@/lib/highlight-context";
 
 const sectionContent = {
   experience: <ExperienceLog />,
@@ -19,12 +20,14 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <main id="main-content" className="page-container" tabIndex={-1}>
-        <Hero />
-        {sections.map((section) => (
-          <Section key={section.id} {...section}>{sectionContent[section.id]}</Section>
-        ))}
-      </main>
+      <HighlightProvider>
+        <main id="main-content" className="page-container" tabIndex={-1}>
+          <Hero />
+          {sections.map((section) => (
+            <Section key={section.id} {...section}>{sectionContent[section.id]}</Section>
+          ))}
+        </main>
+      </HighlightProvider>
       <Footer />
     </>
   );

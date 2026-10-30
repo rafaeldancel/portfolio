@@ -1,0 +1,25 @@
+.token {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--fg-muted);
+}
+
+.token:hover .icon,
+.token:focus .icon {
+  color: var(--brand-color);
+}
+
+.token:hover,
+.token:focus {
+  background: var(--bg-raised);
+}
