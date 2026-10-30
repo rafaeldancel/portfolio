@@ -6,7 +6,7 @@ import { StackManifest } from "@/components/StackManifest";
 import { WorkGrid } from "@/components/WorkGrid";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-import { sections } from "@/content";
+import { experience, sections } from "@/content";
 import { HighlightProvider } from "@/lib/highlight-context";
 
 const sectionContent = {
@@ -24,7 +24,7 @@ export default function Home() {
         <main id="main-content" className="page-container" tabIndex={-1}>
           <Hero />
           {sections.map((section) => (
-            <Section key={section.id} {...section}>{sectionContent[section.id]}</Section>
+            <Section key={section.id} {...section} reveal={section.id === "experience" ? "print" : undefined} revealItems={section.id === "experience" ? experience.length + 1 : undefined}>{sectionContent[section.id]}</Section>
           ))}
         </main>
       </HighlightProvider>

@@ -140,7 +140,7 @@ function PipelinePlayer({ animated, paused }: { animated: boolean; paused: boole
   );
 }
 
-export function PipelineLog() {
+export function PipelineLog({ opacity = 1 }: { opacity?: number | MotionValue<number> } = {}) {
   const reducedMotion = useReducedMotion();
   const panel = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -161,14 +161,15 @@ export function PipelineLog() {
   }, []);
 
   return (
-    <div
+    <motion.div
       ref={panel}
       className={`pipeline-panel ${styles.panel}`}
+      style={{ opacity }}
       data-paused={paused}
       onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(true); }}
       onPointerLeave={() => setHovered(false)}
     >
       <PipelinePlayer key={animated ? "animated" : "static"} animated={animated} paused={paused} />
-    </div>
+    </motion.div>
   );
 }

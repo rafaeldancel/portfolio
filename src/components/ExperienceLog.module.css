@@ -1,6 +1,26 @@
 .row {
+  --print-row-top: 24px;
   position: relative;
+}
+
+.row:first-child {
+  --print-row-top: 0px;
+}
+
+.body {
+  padding-top: var(--print-row-top);
   padding-inline: 12px;
+}
+
+.hash {
+  position: absolute;
+  top: var(--print-row-top);
+  left: 12px;
+}
+
+.hashSlot {
+  display: block;
+  visibility: hidden;
 }
 
 .row::before {
@@ -21,4 +41,10 @@
 .row:focus .hash,
 .row:focus-within .hash {
   color: var(--fg);
+}
+
+@media (min-width: 48rem) {
+  .row {
+    --print-row-top: 28px;
+  }
 }
