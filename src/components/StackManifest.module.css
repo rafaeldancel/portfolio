@@ -1,4 +1,5 @@
 .token {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -19,7 +20,119 @@
   color: var(--brand-color);
 }
 
+.iconStack {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.iconLit {
+  position: absolute;
+  inset: 0;
+  width: 15px;
+  height: 15px;
+  color: var(--brand-color, var(--fg));
+  opacity: 0;
+  transition: opacity 600ms ease-out;
+}
+
+/* Scanner: the line lights a token quickly, then it eases back over 600ms. */
+.token::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--fg-muted);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease-out;
+}
+
+.token[data-scanned]::after,
+.token[data-scanned] .iconLit {
+  opacity: 1;
+  transition-duration: 120ms;
+}
+
+.group {
+  position: relative;
+}
+
+.scan {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scanLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 25px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--accent) 16%, transparent) 24px, var(--accent) 24px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
 .token:hover,
 .token:focus {
   background: var(--bg-raised);
+}
+
+.item {
+  position: relative;
+}
+
+.item[data-active] {
+  z-index: 2;
+}
+
+.token {
+  transition: opacity 200ms ease-out, color 200ms ease-out;
+}
+
+.manifest[data-active] .item:not([data-active]) .token {
+  opacity: 0.4;
+}
+
+.item[data-active] .token {
+  border-color: var(--fg-dim);
+  color: var(--fg);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 3;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 4px 8px;
+  background: var(--bg-raised);
+  color: var(--fg-muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  pointer-events: none;
+  transform: translateX(var(--tooltip-shift, 0px));
+}
+
+.tooltip[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .token,
+  .token::after,
+  .iconLit {
+    transition: none;
+  }
+
+  .scan {
+    display: none;
+  }
 }

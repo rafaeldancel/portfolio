@@ -13,7 +13,7 @@ It must read as a hand-crafted product, not an AI template. The frontend itself 
 - `next/font` for fonts. No UI kits (no shadcn, no MUI).
 - Icons: Simple Icons brand SVGs (`@icons-pack/react-simple-icons`) for the stack section only. If a needed logo is missing there (e.g. AWS, pgAdmin), use the Devicon SVG for that one, inlined as a component. UI icons (arrows, copy) stay hand-drawn inline SVG.
 - `cmdk` allowed for the command palette only.
-- Deploy: Vercel. No backend, no chatbot, no analytics yet.
+- Deploy: Vercel. No backend, no chatbot, no analytics yet. Contact form sends via mailto for now. A Web3Forms provider is scaffolded but off; it turns on later only when `NEXT_PUBLIC_WEB3FORMS_KEY` is set (`.env.local`, never committed).
 
 ## Design direction: "Terminal / pipeline"
 The site looks like a well-designed internal tool an AI engineer would build. Restrained, dense, precise.
@@ -33,7 +33,7 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
 ### Layout
 - 12-col grid, max-width 1200px, 24px gutter, 16px side padding on mobile.
 - Visible structure: hairline borders between sections and inside cards, like a spreadsheet or log viewer. Corners square or 2px. No big rounded cards.
-- Every section has a mono index label: `01 / EXPERIENCE`, `02 / STACK`, etc.
+- Every section has a mono index label: `01 / EXPERIENCE`, `02 / EDUCATION`, `03 / STACK`, etc.
 
 ### Anti-"AI-generated" rules (hard rules)
 - NO purple/blue gradients, glassmorphism, blurred blobs, glowing orbs, aurora backgrounds.
@@ -46,13 +46,13 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
 ## Page structure (single route `/`)
 0. **Top bar** (sticky, 48px): `rafael.dancel` left; section links in mono center; `⌘K` hint + status dot "available" right.
 1. **Hero**
-   - Line 1 (mono label): `CAVITE, PH`
+   - Line 1 (mono label): `~/portfolio · 2026`
    - Name (sans, 72px desktop): `Rafael Dancel`
-   - Title (under the name): `Gen AI Developer` in IBM Plex Sans 300 (light), ~64–76px desktop, `--fg-muted`. Instrument Serif is no longer used: remove it from layout.tsx and the font tokens.
+   - Title (under the name): rotates `Gen AI Developer` ↔ `AI Engineer` (loop, ~3s hold, vertical slide; fixed width; reduced motion = `Gen AI Developer` only) in IBM Plex Sans 300 (light), ~64–76px desktop, `--fg-muted`. Instrument Serif is no longer used: remove it from layout.tsx and the font tokens.
    - Layout: the hero fills the first screen (`min-height: calc(100svh - topbar)`), name ~120–132px desktop over 2 lines, buttons 56–60px tall, PipelineLog panel large (16–17px text) with a header bar (`job: …`) and a footer (`run 1 of 2` + switcher). Bottom of hero: mono `↓ SCROLL · 01 / EXPERIENCE` cue. Mobile: stacked, 3 buttons in one row, compact log below.
    - Subtitle (mono, muted): `Full-stack · Agentic systems · Automation`
    - No extra headline or one-liner for now.
-   - Buttons: `Email` (primary, copies + mailto), `LinkedIn`, `GitHub`. No résumé button for now.
+   - Buttons: primary `Connect with Raf ↓` (scrolls to #contact) + ghost `View work` (scrolls to #work). Same button styling as before. No résumé button for now.
    - **Signature element: `<PipelineLog />`**. A bordered panel on the right (below on mobile) that plays a short log sequence once on load, line by line, like a real job run:
      ```
      [00:00] ingest   annual_report.pdf  ~500 pages
@@ -67,25 +67,26 @@ The site looks like a well-designed internal tool an AI engineer would build. Re
      [00:00] load     vestra-y26s-m1.onnx  38 MB · WebGPU
      [00:01] warmup   first inference 1270ms → 36ms
      [00:02] detect   9 classes · live camera 8–10 fps
-     [00:03] eval     mAP@.5:.95 0.468 → 0.547  (+17% vs thesis)
+     [00:03] eval     mAP@.5:.95 0.468 → 0.547  (+17%)
      [00:04] verify   ONNX ↔ PyTorch parity ✓
      ```
      Play → hold 3s → 200ms clear → next run → loop. Fixed panel height. Pause when off-screen or hovered. Mono `1/2` switcher with prev/next instead of replay.
 2. **01 / Experience**: styled like `git log`. Each entry: commit-hash-looking short id (derived, e.g. `a3f9c1`), date range in mono, role, company, 1 to 2 lines. Hover highlights the row with a 1px amber left rule.
-3. **02 / Stack**: rendered as a dependency manifest. Grouped table: `ai/llm`, `full-stack`, `cloud`, `tooling` → items as mono tokens, each with a small (14–16px) monochrome brand icon in `--fg-muted`, turning to the brand color or `--fg` on hover. Concepts without a logo (RAG, Embeddings, Structured output, LLM evaluation, OCR) get no icon, just the token. No logo cloud, no marquee. Hovering a stack item highlights the project cards below that use it (shared state via context). This cross-linking is a key frontend showcase.
-4. **03 / Work**: a one-project-per-view carousel. Exactly 3 entries, order: Vestra (default, shown first), AI equity research platform, Logos. No other WPH client work.
+3. **02 / Education**: own section after Experience, same git-log row and print-in: hash, `2021–2025`, degree, school. Not in the top-bar nav.
+4. **03 / Stack**: rendered as a dependency manifest. Grouped table: `ai/llm`, `full-stack`, `cloud`, `tooling` → items as mono tokens, each with a small (14–16px) monochrome brand icon in `--fg-muted`, turning to the brand color or `--fg` on hover. Concepts without a logo (RAG, Embeddings, Structured output, LLM evaluation, OCR) get no icon, just the token. No logo cloud, no marquee. Hovering a stack item highlights the project cards below that use it (shared state via context). This cross-linking is a key frontend showcase.
+5. **04 / Work**: a one-project-per-view carousel. Exactly 3 entries, order: Vestra (default, shown first), AI equity research platform, Logos. No other WPH client work.
    - Each slide shows the full project: index, title, one-line context, kind label, **one big metric** as `<MetricDelta from to unit />` (bar animates on view), the points, stack tokens, links (Vestra: live demo + model; no repo link while private). Client work shows "Under NDA: anonymized, no code or screenshots".
    - Controls: ‹ › buttons, mono `1 / 3` counter, pager dots, keyboard ←/→ when the carousel is focused, swipe/drag on touch. Slide transition: horizontal slide + fade, direction-aware.
    - URL hash per project (`#work-vestra`, `#work-a`, `#work-logos`); loading a hash opens that slide.
    - Stack ↔ Work link: hovering/focusing a stack token highlights the pager dots of the projects that use it; the current slide's matching stack tokens highlight too.
    - Small label on each: `PoC · client · team` or `personal · thesis · team` so honesty is visible.
-5. **04 / Contact**: big email (click to copy, shows "copied" in mono), LinkedIn, GitHub. No phone. No form.
-6. **Footer**: `built with Next.js · Tailwind · Framer Motion · AI-assisted, human-reviewed` + year.
+6. **05 / Contact**: line `Based in the Philippines · UTC+8`; the three buttons moved from the hero (Email = copy + mailto, shows "copied" in mono; LinkedIn; GitHub), same styling. Message form: Name, Email, Message, Send. Terminal styling (square/2px corners, hairlines, mono labels), real `<label>`s, required + email validation, hidden honeypot field, states: idle / sending / sent ✓ / error (with mailto fallback link). No phone.
+7. **Footer**: `built with Next.js · Tailwind · Framer Motion` + year.
 
 ### Global interactions
 - **Command palette (⌘K / Ctrl+K, also a button on mobile)** via `cmdk`: jump to sections, open a case study, copy email, open LinkedIn, open GitHub.
 - Keyboard: `g` then `w` → work, `g` then `c` → contact (optional, only if time).
-- Subtle background: faint 1px dotted grid on `--bg`, static. Nothing that follows the cursor.
+- Background: faint 1px dotted grid on `--bg`. Dots near the cursor brighten toward amber in a soft ~160px radius (second dot layer revealed by a radial CSS mask; position via CSS vars updated in rAF, no React state). No blob or glow fill. Off on touch devices and with reduced motion.
 - Section motion: scroll-linked and reversible (src/lib/usePrintIn.tsx). Label hairline draws on scroll, rows print in top→bottom, and fade back out when scrolling up. Smoothed with useSpring, transform/opacity/clip-path only. Reduced motion = final state.
 
 ## Content
@@ -129,14 +130,14 @@ export const work = [
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
     stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "Amazon Bedrock", "Vitest"] },
-  { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
-    context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
+  { id: "vestra", kind: "personal", title: "Vestra",
+    context: "Real-time dress code detection in the browser",
     live: "https://vestra-dresscode.vercel.app",
     model: "https://huggingface.co/rafdancel/vestra-y26s",
-    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs thesis YOLOv5s (+17%)" },
+    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs YOLOv5s baseline (+17%)" },
     points: [
       "Trained YOLO26s on a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
-      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs the thesis model, on a 283-image test split.",
+      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs a YOLOv5s baseline, on a 283-image test split.",
       "Runs on-device with WebGPU via ONNX: first inference 1270 ms → 36 ms after a warm-up fix; live camera at 8–10 fps.",
       "Real-world test set (150 images, never trained on): trousers detected 6 → 43 of 54.",
       "Known gap: leggings mostly read as trousers (2/31).",
@@ -150,7 +151,7 @@ export const work = [
 
 export const education = {
   degree: "BS Computer Science, Intelligent Systems",
-  school: "De La Salle University – Dasmariñas", range: "2021–2025", honor: "Dean's Lister",
+  school: "De La Salle University – Dasmariñas", range: "2021–2025",
 };
 ```
 Note: fix the stack lists on cards to match only what the case study notes say. Don't add tech not listed in the KT.
@@ -193,5 +194,6 @@ public/ favicon.svg
 7. **Polish + ship (45m)**: reduced motion, a11y pass, Lighthouse, OG image, deploy to Vercel.
 
 ## Things I (Raf) still need to supply
+- Later: Web3Forms access key (web3forms.com, free) → `.env.local` and Vercel env, to switch the form from mailto
 - Vestra repo is private: no GitHub link on the card until it's public
 - Later: résumé PDF, Vestra details (placeholder card ships for now)

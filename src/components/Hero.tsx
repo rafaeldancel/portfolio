@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type MouseEvent } from "react";
-import { AnimatePresence, motion, useAnimationControls, useScroll, useTransform, type Variants } from "motion/react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { motion, useAnimationControls, useScroll, useTransform, type Variants } from "motion/react";
 import { profile, siteContent } from "@/content";
 import { PipelineLog } from "@/components/PipelineLog";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { scrollToHash, usePageVisible } from "@/lib/navigation";
 import { motionEase, useActiveWillChange, useSmoothScrollProgress } from "@/lib/scroll-motion";
 
 const entrance: Variants = {
@@ -21,57 +22,63 @@ const cueEntrance: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.2, delay: 0.5, ease: motionEase } },
 };
 
-const titleVariants: Variants = {
-  enter: { y: "100%", opacity: 0 },
-  center: { y: 0, opacity: 1, transition: { duration: 0.5, ease: motionEase } },
-  exit: { y: "-100%", opacity: 0, transition: { duration: 0.5, ease: motionEase } },
-};
-const titleHold = 3000;
-const titleSwap = 500;
+const typing = { char: 70, jitter: 20, delete: 35, hold: 2500, pause: 400 } as const;
 
-function subscribeVisibility(onChange: () => void) {
-  document.addEventListener("visibilitychange", onChange);
-  return () => document.removeEventListener("visibilitychange", onChange);
+type TypeState = Readonly<{
+  title: number;
+  length: number;
+  phase: "typing" | "holding" | "deleting" | "pausing";
+}>;
+
+// One step of the type → hold → backspace → pause loop, with the delay before it.
+function nextTypeStep({ title, length, phase }: TypeState, titles: readonly string[]): [number, TypeState] {
+  const target = titles[title];
+  switch (phase) {
+    case "typing": {
+      const delay = typing.char + (Math.random() * 2 - 1) * typing.jitter;
+      return [delay, { title, length: length + 1, phase: length + 1 >= target.length ? "holding" : "typing" }];
+    }
+    case "holding":
+      return [typing.hold, { title, length, phase: "deleting" }];
+    case "deleting":
+      return [typing.delete, { title, length: length - 1, phase: length - 1 <= 0 ? "pausing" : "deleting" }];
+    case "pausing":
+      return [typing.pause, { title: (title + 1) % titles.length, length: 0, phase: "typing" }];
+  }
 }
 
-function RotatingTitle() {
+function TypewriterTitle() {
   const titles = siteContent.heroTitles;
   const reducedMotion = useReducedMotion();
-  const visible = useSyncExternalStore(subscribeVisibility, () => document.visibilityState === "visible", () => false);
-  const [index, setIndex] = useState(0);
-  const rotating = reducedMotion === false;
+  const visible = usePageVisible();
+  // Start fully typed, so the server render, first paint and reduced motion all match.
+  const [state, setState] = useState<TypeState>({ title: 0, length: titles[0].length, phase: "holding" });
+  const animated = reducedMotion === false;
 
   useEffect(() => {
-    if (!rotating || !visible) return;
-    const timer = setTimeout(() => setIndex((current) => (current + 1) % titles.length), titleHold + titleSwap);
+    if (!animated || !visible) return;
+    const [delay, next] = nextTypeStep(state, titles);
+    const timer = setTimeout(() => setState(next), delay);
     return () => clearTimeout(timer);
-  }, [index, rotating, titles.length, visible]);
+  }, [animated, state, titles, visible]);
 
-  const title = rotating ? titles[index] : titles[0];
+  const text = animated ? titles[state.title].slice(0, state.length) : titles[0];
   const longest = titles.reduce((a, b) => (b.length > a.length ? b : a));
+  const blinking = animated && state.phase === "holding";
   return (
     <>
       <span className="sr-only">{titles[0]}</span>
-      {/* Every title shares one grid cell sized by the longest, so swaps never shift layout. */}
-      <span className="hero-role-rotator" aria-hidden="true">
-        <span className="hero-role-sizer">{longest}</span>
-        <AnimatePresence initial={false}>
-          <motion.span key={title} className="hero-role-word" variants={titleVariants} initial="enter" animate="center" exit="exit">
-            {title}
-          </motion.span>
-        </AnimatePresence>
+      {/* The typed line shares one grid cell with the longest title, so typing never shifts layout. */}
+      <span className="hero-type" aria-hidden="true">
+        <span className="hero-type-sizer">{longest}<span className="hero-type-cursor" /></span>
+        <span className="hero-type-text">{text}<span className="hero-type-cursor" data-blink={blinking ? "true" : undefined} /></span>
       </span>
     </>
   );
 }
 
-function scrollToSection(event: MouseEvent<HTMLAnchorElement>, reducedMotion: boolean | null) {
-  const hash = event.currentTarget.hash;
-  const target = document.querySelector(hash);
-  if (!target) return;
-  event.preventDefault();
-  target.scrollIntoView({ behavior: reducedMotion === false ? "smooth" : "auto", block: "start" });
-  window.history.pushState(window.history.state, "", hash);
+function onSectionLink(event: MouseEvent<HTMLAnchorElement>, reducedMotion: boolean | null) {
+  if (scrollToHash(event.currentTarget.hash, reducedMotion)) event.preventDefault();
 }
 
 export function Hero() {
@@ -112,11 +119,11 @@ export function Hero() {
         <motion.h1 id="page-title" variants={entrance} aria-label={profile.name}>
           {profile.name.split(" ").map((part, index) => <span key={part}>{index > 0 && " "}{part}</span>)}
         </motion.h1>
-        <motion.p className="hero-role" variants={entrance}><RotatingTitle /></motion.p>
+        <motion.p className="hero-role" variants={entrance}><TypewriterTitle /></motion.p>
         <motion.p className="hero-specialties" variants={entrance}>{siteContent.specialties}</motion.p>
         <motion.div className="hero-links" variants={entrance}>
-          <a className="action-link action-primary" href="#contact" onClick={(event) => scrollToSection(event, reducedMotion)}>{siteContent.connectLabel}</a>
-          <a className="action-link" href="#work" onClick={(event) => scrollToSection(event, reducedMotion)}>{siteContent.viewWorkLabel}</a>
+          <a className="action-link action-primary" href="#contact" onClick={(event) => onSectionLink(event, reducedMotion)}>{siteContent.connectLabel}</a>
+          <a className="action-link" href="#work" onClick={(event) => onSectionLink(event, reducedMotion)}>{siteContent.viewWorkLabel}</a>
         </motion.div>
       </motion.div>
       <PipelineLog opacity={reducedMotion === false ? pipelineOpacity : 1} />

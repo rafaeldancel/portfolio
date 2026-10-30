@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "motion/react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { profile, siteContent } from "@/content";
 import { ExternalArrow } from "@/components/ExternalArrow";
+import { LinkedinIcon } from "@/components/icons/LinkedinIcon";
 import { usePrintInRow } from "@/lib/usePrintIn";
 import { mailtoHref, sendMessage, type MessageProvider } from "@/lib/send-message";
 import styles from "@/components/Contact.module.css";
@@ -15,6 +17,16 @@ type FormState =
   | { status: "error" };
 
 const copiedDuration = 2000;
+
+// UI icon, not a brand mark: drawn by hand to match ExternalArrow.
+function EnvelopeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+      <rect x="1.5" y="3.5" width="13" height="9" stroke="currentColor" strokeWidth="1" />
+      <path d="m1.5 3.5 6.5 5 6.5-5" stroke="currentColor" strokeWidth="1" />
+    </svg>
+  );
+}
 
 function PrintRow({ index, className, children }: { index: number; className: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -51,6 +63,7 @@ function EmailButton() {
   return (
     <>
       <a className="action-link action-primary" href={mailtoHref()} aria-label={siteContent.emailLabel} onClick={copy}>
+        <EnvelopeIcon />
         {/* Both labels share one cell so the swap never resizes the button. */}
         <span className={styles.emailLabel} aria-hidden="true">
           <span className={copied ? styles.hiddenLabel : undefined}>{siteContent.emailLabel}</span>
@@ -172,8 +185,8 @@ export function Contact() {
         <p className={styles.location}>{siteContent.contactLocation}</p>
         <div className={styles.actions}>
           <EmailButton />
-          <a className="action-link" href={profile.linkedin}>{siteContent.linkedinLabel}<ExternalArrow /></a>
-          <a className="action-link" href={profile.github}>{siteContent.githubLabel}<ExternalArrow /></a>
+          <a className="action-link" href={profile.linkedin}><LinkedinIcon aria-hidden="true" focusable="false" />{siteContent.linkedinLabel}<ExternalArrow /></a>
+          <a className="action-link" href={profile.github}><SiGithub size={16} title="" aria-hidden="true" focusable="false" />{siteContent.githubLabel}<ExternalArrow /></a>
         </div>
       </PrintRow>
       <PrintRow index={1} className={styles.formRow}>

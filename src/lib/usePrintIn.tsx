@@ -16,9 +16,42 @@ type PrintTimeline = Readonly<{
 
 const PrintContext = createContext<PrintTimeline | null>(null);
 
+// Reveals complete when an element's top reaches 85% of the viewport.
+const revealEnd = 0.85;
+
+// Scroll progress for the reveal, rescaled so it still reaches 1 at the bottom
+// of the page when the document is too short for the element to hit `revealEnd`.
+function useRevealProgress(target: RefObject<HTMLElement | null>) {
+  const { scrollYProgress } = useScroll({ target, offset: ["start end", `start ${revealEnd * 100}%`] });
+  const reach = useMotionValue(1);
+
+  useEffect(() => {
+    const measure = () => {
+      const element = target.current;
+      if (!element) return;
+      const viewport = window.innerHeight;
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - viewport;
+      const reachable = (maxScroll - (top - viewport)) / (viewport * (1 - revealEnd));
+      reach.set(Math.min(1, Math.max(0.001, reachable)));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(document.body);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [reach, target]);
+
+  const progress = useTransform(() => Math.min(1, scrollYProgress.get() / reach.get()));
+  return { scrollYProgress, progress };
+}
+
 export function usePrintInTimeline(target: RefObject<HTMLElement | null>, items: number) {
-  const { scrollYProgress } = useScroll({ target, offset: ["start end", "start 60%"] });
-  const progress = useSmoothScrollProgress(scrollYProgress);
+  const { progress: revealProgress } = useRevealProgress(target);
+  const progress = useSmoothScrollProgress(revealProgress);
   const duration = Math.max(printTiming.line, printTiming.reveal + Math.max(0, items - 1) * printTiming.stagger);
   // Scroll supplies the clock: these durations set relative pacing, not a timer.
   const lineScale = useTransform(progress, [0, printTiming.line / duration], [0, 1]);
@@ -38,8 +71,8 @@ export function usePrintInRow(target: RefObject<HTMLElement | null>, index: numb
   if (!timeline) throw new Error("usePrintInRow requires a print-enabled Section");
   // Measure the stationary row; transforms belong on its inner wrapper so they
   // cannot change the scroll/viewport measurements that drive the animation.
-  const { scrollYProgress } = useScroll({ target, offset: ["start end", "start 60%"] });
-  const progress = useSmoothScrollProgress(scrollYProgress);
+  const { scrollYProgress, progress: reachableProgress } = useRevealProgress(target);
+  const progress = useSmoothScrollProgress(reachableProgress);
   const duration = printTiming.reveal + Math.max(0, timeline.items - 1) * printTiming.stagger;
   const start = index * printTiming.stagger / duration;
   const end = (index * printTiming.stagger + printTiming.reveal) / duration;

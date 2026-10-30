@@ -10,7 +10,7 @@ import { usePrintInRow } from "@/lib/usePrintIn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import styles from "@/components/WorkCarousel.module.css";
 
-const projects = ["vestra", "a", "logos"]
+export const projects = ["vestra", "a", "logos"]
   .map((id) => work.find((item) => item.id === id)!)
   .filter((item) => !item.hidden);
 const slideVariants: Variants = {
@@ -81,7 +81,7 @@ export function WorkGrid() {
     >
       <motion.div style={{ opacity: row.opacity, y: row.y, clipPath: row.clipPath, willChange: row.willChange }}>
         <div className={styles.controls}>
-          <div className={styles.pager} role="group" aria-label={sections[2].label}>
+          <div className={styles.pager} role="group" aria-label={sections.find(({ id }) => id === "work")?.label}>
             {projects.map((project, projectIndex) => (
               <button
                 key={project.id}

@@ -1,0 +1,145 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgb(13 13 11 / 0.72);
+}
+
+.dialog {
+  position: fixed;
+  top: min(20vh, 160px);
+  left: 50%;
+  z-index: 41;
+  width: min(560px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--bg-raised);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.875rem;
+}
+
+.dialog:focus {
+  outline: none;
+}
+
+.overlay[data-state="open"] {
+  animation: overlay-in 180ms ease-out;
+}
+
+.overlay[data-state="closed"] {
+  animation: overlay-out 180ms ease-in;
+}
+
+.dialog[data-state="open"] {
+  animation: dialog-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dialog[data-state="closed"] {
+  animation: dialog-out 180ms ease-in;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+}
+
+@keyframes overlay-out {
+  to { opacity: 0; }
+}
+
+/* Fade in while rising 8px and scaling up slightly. */
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.98);
+  }
+}
+
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.98);
+  }
+}
+
+.input {
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 16px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.input::placeholder {
+  color: var(--fg-dim);
+}
+
+.input:focus,
+.input:focus-visible {
+  outline: none;
+}
+
+.list {
+  max-height: min(360px, 60vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 8px;
+}
+
+.empty {
+  padding: 12px 16px;
+  color: var(--fg-muted);
+}
+
+.group [cmdk-group-heading] {
+  padding: 8px 16px 4px;
+  color: var(--fg-dim);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  border-left: 1px solid transparent;
+  padding: 8px 16px 8px 15px;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+
+.item[data-selected="true"] {
+  border-left-color: var(--accent);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.item[data-selected="true"] .index {
+  color: var(--accent);
+}
+
+.index {
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+}
+
+.meta {
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay[data-state],
+  .dialog[data-state] {
+    animation: none;
+  }
+}

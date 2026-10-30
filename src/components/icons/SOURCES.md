@@ -14,6 +14,8 @@ for the monochrome manifest. No logo has been traced, redrawn, or approximated.
 | Auth.js | Text-only. Not in the installed Simple Icons package or Devicon catalogue. The [official repository](https://github.com/nextauthjs/next-auth/tree/main/docs/public/img) publishes `logo-sm.png`; no official brand SVG found. Unofficial tracings are excluded. |
 | Codex | [Devicon codex-plain.svg](https://github.com/devicons/devicon/blob/master/icons/codex/codex-plain.svg), verified exact path match; retained |
 | Antigravity | [Devicon antigravity-plain.svg](https://github.com/devicons/devicon/blob/master/icons/antigravity/antigravity-plain.svg), verified exact path match; retained |
+| LinkedIn (contact button) | [Devicon linkedin-plain.svg](https://github.com/devicons/devicon/blob/master/icons/linkedin/linkedin-plain.svg), path copied verbatim. Not in the installed Simple Icons package (removed upstream at LinkedIn's request) |
+| GitHub (contact button) | Installed `@icons-pack/react-simple-icons`, `SiGithub` |
 
 The installed Simple Icons exports were checked first, then the upstream
 [Devicon catalogue](https://github.com/devicons/devicon/blob/master/devicon.json),

@@ -27,7 +27,7 @@ export const profile = {
   location: "Cavite, Philippines",
   email: "rafaeljandancel@gmail.com",
   linkedin: "https://linkedin.com/in/rafaeldancel",
-  github: "https://github.com/YOUR_HANDLE",
+  github: "https://github.com/rafaeldancel",
   // resume: not yet. Add a "Download résumé" button later when the PDF exists.
 };
 
@@ -57,14 +57,14 @@ export const work: readonly WorkItem[] = [
       "AI insight confidence 0.72–0.96 after rebuilding grounding.",
     ],
     stack: ["Next.js", "TypeScript", "tRPC", "Prisma", "PostgreSQL", "Amazon Bedrock", "Vitest"] },
-  { id: "vestra", kind: "personal · builds on team thesis", title: "Vestra",
-    context: "Real-time dress code detection in the browser · v2 of my UWear thesis",
+  { id: "vestra", kind: "personal", title: "Vestra",
+    context: "Real-time dress code detection in the browser",
     live: "https://vestra-dresscode.vercel.app",
     model: "https://huggingface.co/rafdancel/vestra-y26s",
-    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs thesis YOLOv5s (+17%)" },
+    metric: { from: 0.468, to: 0.547, unit: "mAP@.5:.95", label: "vs YOLOv5s baseline (+17%)" },
     points: [
       "Trained YOLO26s on a merged 9-class dataset (Roboflow skirts set, cleaned, + dress and leggings from Fashionpedia, license-checked).",
-      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs the thesis model, on a 283-image test split.",
+      "mAP@.5:.95 0.468 → 0.547 (+17%) and crop-top 0.241 → 0.409 vs a YOLOv5s baseline, on a 283-image test split.",
       "Runs on-device with WebGPU via ONNX: first inference 1270 ms → 36 ms after a warm-up fix; live camera at 8–10 fps.",
       "Real-world test set (150 images, never trained on): trousers detected 6 → 43 of 54.",
       "Known gap: leggings mostly read as trousers (2/31).",
@@ -79,7 +79,7 @@ export const work: readonly WorkItem[] = [
 
 export const education = {
   degree: "BS Computer Science, Intelligent Systems",
-  school: "De La Salle University – Dasmariñas", range: "2021–2025", honor: "Dean's Lister",
+  school: "De La Salle University – Dasmariñas", range: "2021–2025",
 };
 
 // Interface copy follows AGENTS.md and Raf's approved hero direction.
@@ -89,6 +89,18 @@ export const siteContent = {
   identity: "rafael.dancel",
   available: "available",
   commandHint: "⌘K",
+  commandHintLabel: "Open command palette",
+  paletteLabel: "Command palette",
+  palettePlaceholder: "Type a command or search…",
+  paletteEmpty: "No matches.",
+  paletteNavigate: "Navigate",
+  paletteProjects: "Projects",
+  paletteActions: "Actions",
+  copyEmailLabel: "Copy email",
+  openLinkedinLabel: "Open LinkedIn",
+  openGithubLabel: "Open GitHub",
+  usedInLabel: "used in:",
+  usedInNone: "—",
   heroLabel: "~/portfolio · 2026",
   // The first title is the static, screen-reader and reduced-motion title.
   heroTitles: ["Gen AI Developer", "AI Engineer"],
@@ -111,7 +123,7 @@ export const siteContent = {
   modelLabel: "model",
   pipelineCheck: "✓",
   nda: "Under NDA: anonymized, no code or screenshots",
-  contactLocation: "Based in Philippines · UTC+8",
+  contactLocation: "Based in the Philippines · UTC+8",
   formLabel: "Send a message",
   nameLabel: "Name",
   formEmailLabel: "Email",
@@ -124,14 +136,16 @@ export const siteContent = {
   sendFallback: "Email me directly",
   requiredError: "required",
   emailError: "enter a valid email",
-  footer: "built with Next.js · Tailwind · Framer Motion · AI-assisted, human-reviewed",
+  footer: "built with Next.js · Tailwind · Framer Motion",
 } as const;
 
+// `nav: false` keeps a section out of the top bar.
 export const sections = [
-  { id: "experience", index: "01", label: "Experience" },
-  { id: "stack", index: "02", label: "Stack" },
-  { id: "work", index: "03", label: "Work" },
-  { id: "contact", index: "04", label: "Contact" },
+  { id: "experience", index: "01", label: "Experience", nav: true },
+  { id: "education", index: "02", label: "Education", nav: false },
+  { id: "stack", index: "03", label: "Stack", nav: true },
+  { id: "work", index: "04", label: "Work", nav: true },
+  { id: "contact", index: "05", label: "Contact", nav: true },
 ] as const;
 
 export type PipelineLine = Readonly<{
@@ -176,8 +190,8 @@ export const pipelineRuns: readonly PipelineJob[] = [
       { time: "00:01", verb: "warmup", detail: "first inference 1270ms → 36ms",
         count: { from: 1270, to: 36, prefix: "first inference 1270ms → ", suffix: "ms" } },
       { time: "00:02", verb: "detect", detail: "9 classes · live camera 8–10 fps" },
-      { time: "00:03", verb: "eval", detail: "mAP@.5:.95 0.468 → 0.547  (+17% vs thesis)",
-        count: { from: 0.468, to: 0.547, precision: 3, prefix: "mAP@.5:.95 0.468 → ", suffix: "  (+17% vs thesis)" } },
+      { time: "00:03", verb: "eval", detail: "mAP@.5:.95 0.468 → 0.547  (+17%)",
+        count: { from: 0.468, to: 0.547, precision: 3, prefix: "mAP@.5:.95 0.468 → ", suffix: "  (+17%)" } },
       { time: "00:04", verb: "verify", detail: "ONNX ↔ PyTorch parity", passed: true },
     ],
   },

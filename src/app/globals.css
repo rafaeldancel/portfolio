@@ -73,6 +73,31 @@
 }
 
 @layer components {
+  /* Painted under in-flow content (z-index -1), so panels cover it like the base grid. */
+  .cursor-dots {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* While the canvas draws the grid, the body's CSS dots step aside. */
+  :root[data-cursor-canvas] body {
+    background-image: none;
+  }
+
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cursor-dots {
+      display: none;
+    }
+
+    :root[data-cursor-canvas] body {
+      background-image: radial-gradient(circle, var(--line) 0.5px, transparent 0.5px);
+    }
+  }
+
   .page-container {
     width: calc(100% - 32px);
     max-width: 1200px;
@@ -171,10 +196,13 @@
   }
 
   .command-hint {
+    min-height: 24px;
     border: 1px solid var(--line);
-    padding: 1px 5px;
+    padding: 1px 6px;
+    color: inherit;
     font-family: inherit;
     font-size: 0.75rem;
+    cursor: pointer;
   }
 
   .status-dot {
@@ -221,22 +249,38 @@
     line-height: 1.1;
   }
 
-  .hero-role-rotator {
+  .hero-type {
     display: inline-grid;
-    overflow: hidden;
-    /* Room for descenders inside the clip, without changing line height. */
-    padding-bottom: 0.12em;
-    margin-bottom: -0.12em;
-    vertical-align: top;
+    white-space: pre;
   }
 
-  .hero-role-sizer,
-  .hero-role-word {
+  .hero-type-sizer,
+  .hero-type-text {
     grid-area: 1 / 1;
   }
 
-  .hero-role-sizer {
+  .hero-type-sizer {
     visibility: hidden;
+  }
+
+  /* PipelineLog's block cursor, scaled to the title's font size. */
+  .hero-type-cursor {
+    display: inline-block;
+    width: 0.3em;
+    height: 0.72em;
+    margin-left: 0.08em;
+    background: var(--accent);
+    vertical-align: -0.04em;
+  }
+
+  .hero-type-cursor[data-blink] {
+    animation: cursor-blink 1s steps(1, end) infinite;
+  }
+
+  @keyframes cursor-blink {
+    50% {
+      opacity: 0;
+    }
   }
 
   .hero-specialties {
@@ -373,8 +417,7 @@
     grid-column: 1 / -1;
   }
 
-  .experience-copy h3,
-  .education-row h3 {
+  .experience-copy h3 {
     font-size: 1.25rem;
     font-weight: 500;
     line-height: 1.3;
@@ -391,30 +434,6 @@
     color: var(--fg-muted);
     font-size: 0.875rem;
     line-height: 1.65;
-  }
-
-  .education-row {
-    display: grid;
-    gap: 20px;
-    padding-top: 24px;
-  }
-
-  .education-honor,
-  .education-certs {
-    color: var(--fg-muted);
-    font-size: 0.75rem;
-    line-height: 1.7;
-  }
-
-  .education-honor {
-    margin-top: 8px;
-    font-family: var(--font-ibm-plex-mono), monospace;
-  }
-
-  .education-certs {
-    display: grid;
-    align-content: start;
-    gap: 8px;
   }
 
   .manifest-row {
@@ -657,12 +676,6 @@
 
     .experience-copy {
       grid-column: auto;
-    }
-
-    .education-row {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 2fr);
-      gap: 24px;
-      padding-top: 28px;
     }
 
     .manifest-row {
